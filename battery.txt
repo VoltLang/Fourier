@@ -1,2 +1,4 @@
 --dep
 watt
+--if-linux
+-lclang-3.8

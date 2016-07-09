@@ -1,11 +1,5 @@
 // Copyright © 2016, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
-module main;
+module lib.clang.buildsystem;
 
-import lib.clang;
-
-
-fn main(args : string[]) i32
-{
-	return 0;
-}
+public import lib.clang.c.BuildSystem;
