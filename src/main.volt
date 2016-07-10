@@ -3,10 +3,12 @@
 module main;
 
 import lib.clang;
+
+import watt.conv;
 import watt.io;
 
 
-fn main(args : string[]) i32
+fn main(args: string[]) i32
 {
 	test();
 	return 0;
@@ -16,34 +18,65 @@ fn test() void
 {
 	index := clang_createIndex(0, 0);
 	args := ["-I.".ptr];
+	file := "test/test.c";
 	tu := clang_parseTranslationUnit(index,
-		"test/test.c", args.ptr, cast(int)args.length,
+		file.ptr, args.ptr, cast(int)args.length,
 		null, 0, CXTranslationUnit_None);
 
+	tu.printDiag(file);
 	tu.walk();
+
+	clang_disposeTranslationUnit(tu);
+	clang_disposeIndex(index);
 }
 
-fn printDiag(tu : CXTranslationUnit) void
+fn printDiag(tu: CXTranslationUnit, file: string) void
 {
-	diagnosticCount := clang_getNumDiagnostics(tu);
+	count := clang_getNumDiagnostics(tu);
 
-	foreach (i; 0 .. diagnosticCount) {
-		diagnostic : CXDiagnostic = clang_getDiagnostic(tu, i);
-		location : CXSourceLocation = clang_getDiagnosticLocation(diagnostic);
-		text : CXString = clang_getDiagnosticSpelling(diagnostic);
-		line, column : u32;
-		clang_getSpellingLocation(location, null, &line, &column, null);
+	foreach (i; 0 .. count) {
+		loc: CXSourceLocation;
+		diag: CXDiagnostic;
+		text: CXString;
+		info: string;
+		line, column: u32;
+
+		diag = clang_getDiagnostic(tu, i);
+		clang_getDiagnosticLocation(out loc, diag);
+		text = clang_getDiagnosticSpelling(diag);
+
+		clang_getSpellingLocation(loc, null, &line, &column, null);
+		info = toString(clang_getCString(text));
+		clang_disposeString(text);
+
+		output.writefln("%s:%s:%s info %s", file, line, column, info);
 	}
 }
 
-fn walk(tu : CXTranslationUnit) void
+class Walker
 {
-	coursor := clang_getTranslationUnitCursor(tu);
-	clang_visitChildren(coursor, visit, null);
+	int ident;
 }
 
-fn visit(cursor : CXCursor, p : CXCursor, void*) CXChildVisitResult
+fn walk(tu: CXTranslationUnit) void
 {
-	writefln("visit: %s", cursor.kind);
+	w := new Walker();
+	ptr := cast(void*)w;
+
+	coursor := clang_getTranslationUnitCursor(tu);
+	clang_visitChildren(coursor, visit, ptr);
+}
+
+fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
+{
+	w := cast(Walker)ptr;
+
+	foreach (0 .. w.ident) {
+		writef("  ");
+	}
+	writefln("+- %s", cursor.kind);
+	w.ident++;
+	clang_visitChildren(cursor, visit, ptr);
+	w.ident--;
 	return CXChildVisit_Continue;
 }
