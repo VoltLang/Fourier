@@ -892,7 +892,8 @@ clang_getDiagnosticSeverity(CXDiagnostic);
  * This location is where Clang would print the caret ('^') when
  * displaying the diagnostic on the command line.
  */
-CXSourceLocation clang_getDiagnosticLocation(CXDiagnostic);
+// TODO HACK!
+void clang_getDiagnosticLocation(out CXSourceLocation, CXDiagnostic);
 
 /**
  * \brief Retrieve the text of the given diagnostic.
