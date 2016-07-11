@@ -14,7 +14,7 @@ fn main(args: string[]) i32
 	return 0;
 }
 
-fn test() void
+fn test()
 {
 	index := clang_createIndex(0, 0);
 	args := ["-I.".ptr];
@@ -30,7 +30,7 @@ fn test() void
 	clang_disposeIndex(index);
 }
 
-fn printDiag(tu: CXTranslationUnit, file: string) void
+fn printDiag(tu: CXTranslationUnit, file: string)
 {
 	count := clang_getNumDiagnostics(tu);
 
@@ -42,11 +42,11 @@ fn printDiag(tu: CXTranslationUnit, file: string) void
 		line, column: u32;
 
 		diag = clang_getDiagnostic(tu, i);
-		clang_getDiagnosticLocation(out loc, diag);
+		loc = clang_getDiagnosticLocation(diag);
 		text = clang_getDiagnosticSpelling(diag);
 
 		clang_getSpellingLocation(loc, null, &line, &column, null);
-		info = toString(clang_getCString(text));
+		info = clang_getVoltString(text);
 		clang_disposeString(text);
 
 		output.writefln("%s:%s:%s info %s", file, line, column, info);
@@ -58,13 +58,18 @@ class Walker
 	int ident;
 }
 
-fn walk(tu: CXTranslationUnit) void
+fn walk(tu: CXTranslationUnit)
 {
 	w := new Walker();
 	ptr := cast(void*)w;
+	cursor := clang_getTranslationUnitCursor(tu);
 
-	coursor := clang_getTranslationUnitCursor(tu);
-	clang_visitChildren(coursor, visit, ptr);
+	visit(cursor, CXCursor.init, ptr);
+
+	writefln("");
+
+	// Print all top level function decls.
+	clang_visitChildren(cursor, visitFunctiontDecls, ptr);
 }
 
 fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
@@ -74,9 +79,97 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	foreach (0 .. w.ident) {
 		writef("  ");
 	}
-	writefln("+- %s", cursor.kind);
+	foo: int;
+
+	// Print the kind of node we are standing on.
+	writef("+- %s ", cursor.kind.toString());
+
+	// Print the type of this node.
+	type := clang_getCursorType(cursor);
+	if (type.kind != CXType_Invalid) {
+		writef("   \"");
+		type.printType();
+		writefln("\"");
+	} else {
+		writefln("");
+	}
+
+	// Visit children.
 	w.ident++;
 	clang_visitChildren(cursor, visit, ptr);
 	w.ident--;
+
+	// Done here.
 	return CXChildVisit_Continue;
+}
+
+fn visitFunctiontDecls(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
+{
+	// Early out
+	if (cursor.kind != CXCursor_FunctionDecl) {
+		return CXChildVisit_Continue;
+	}
+
+
+	funcText := clang_getCursorSpelling(cursor);
+	funcName := clang_getVoltString(funcText);
+	clang_disposeString(funcText);
+
+	writef("extern(C) fn %s(", funcName);
+
+	count := cast(u32)clang_Cursor_getNumArguments(cursor);
+	foreach (i; 0 .. count) {
+		if (i > 0) {
+			writef(", ");
+		}
+
+		arg := clang_Cursor_getArgument(cursor, i);
+		argText := clang_getCursorSpelling(arg);
+		argName := clang_getVoltString(argText);
+		clang_disposeString(argText);
+
+		if (argName !is null) {
+			writef("%s : ", argName);
+		}
+		type := clang_getCursorType(arg);
+		type.printType();
+	}
+
+	writef(") ");
+
+	type := clang_getCursorType(cursor);
+	ret := clang_getResultType(type);
+	ret.printType();
+	writefln(";");
+
+	return CXChildVisit_Continue;
+}
+
+fn printType(type: CXType)
+{
+	switch (type.kind) {
+	case CXType_Invalid: return;
+	case CXType_FunctionProto:
+		writef("fn (");
+		count := cast(u32)clang_getNumArgTypes(type);
+
+		foreach (i; 0 .. count) {
+			if (i > 0) {
+				writef(", ");
+			}
+
+			arg := clang_getArgType(type, i);
+			arg.printType();
+		}
+		writef(") ");
+
+		ret := clang_getResultType(type);
+		ret.printType();
+		return;
+	case CXType_UInt: return writef("u32");
+	case CXType_Int: return writef("i32");
+	case CXType_ULongLong: return writef("u64");
+	case CXType_LongLong: return writef("i64");
+	default: writef("%s", type.kind.toString());
+	}
 }
