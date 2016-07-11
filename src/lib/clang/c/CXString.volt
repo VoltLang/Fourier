@@ -43,12 +43,14 @@ struct CXStringSet {
 /**
  * \brief Retrieve the character data associated with the given string.
  */
-const(char)* clang_getCString(CXString str);
+// TODO HACK!
+const(char)* clang_getCString(const(void)*, u32);
 
 /**
  * \brief Free the given string.
  */
-void clang_disposeString(CXString str);
+// TODO HACK!
+void clang_disposeString(const(void)*, u32);
 
 /**
  * \brief Free the given string set.

@@ -5,6 +5,12 @@ module lib.clang.index;
 public import lib.clang.c.Index;
 
 
+/*
+ *
+ * Enum flatteners alias.
+ *
+ */
+
 //CXAvailabilityKind
 alias CXAvailability_Available = CXAvailabilityKind.CXAvailability_Available;
 alias CXAvailability_Deprecated = CXAvailabilityKind.CXAvailability_Deprecated;
@@ -573,3 +579,485 @@ alias CXIndexOpt_IndexFunctionLocalSymbols = CXIndexOptFlags.CXIndexOpt_IndexFun
 alias CXIndexOpt_IndexImplicitTemplateInstantiations = CXIndexOptFlags.CXIndexOpt_IndexImplicitTemplateInstantiations;
 alias CXIndexOpt_SuppressWarnings = CXIndexOptFlags.CXIndexOpt_SuppressWarnings;
 alias CXIndexOpt_SkipParsedBodiesInSession = CXIndexOptFlags.CXIndexOpt_SkipParsedBodiesInSession;
+
+
+/*
+ *
+ * Enum to string functions.
+ *
+ */
+
+string toString(CXCursorKind kind)
+{
+	switch (kind) {
+	case CXCursor_UnexposedDecl: return "CXCursor_UnexposedDecl";
+	case CXCursor_StructDecl: return "CXCursor_StructDecl";
+	case CXCursor_UnionDecl: return "CXCursor_UnionDecl";
+	case CXCursor_ClassDecl: return "CXCursor_ClassDecl";
+	case CXCursor_EnumDecl: return "CXCursor_EnumDecl";
+	case CXCursor_FieldDecl: return "CXCursor_FieldDecl";
+	case CXCursor_EnumConstantDecl: return "CXCursor_EnumConstantDecl";
+	case CXCursor_FunctionDecl: return "CXCursor_FunctionDecl";
+	case CXCursor_VarDecl: return "CXCursor_VarDecl";
+	case CXCursor_ParmDecl: return "CXCursor_ParmDecl";
+	case CXCursor_ObjCInterfaceDecl: return "CXCursor_ObjCInterfaceDecl";
+	case CXCursor_ObjCCategoryDecl: return "CXCursor_ObjCCategoryDecl";
+	case CXCursor_ObjCProtocolDecl: return "CXCursor_ObjCProtocolDecl";
+	case CXCursor_ObjCPropertyDecl: return "CXCursor_ObjCPropertyDecl";
+	case CXCursor_ObjCIvarDecl: return "CXCursor_ObjCIvarDecl";
+	case CXCursor_ObjCInstanceMethodDecl: return "CXCursor_ObjCInstanceMethodDecl";
+	case CXCursor_ObjCClassMethodDecl: return "CXCursor_ObjCClassMethodDecl";
+	case CXCursor_ObjCImplementationDecl: return "CXCursor_ObjCImplementationDecl";
+	case CXCursor_ObjCCategoryImplDecl: return "CXCursor_ObjCCategoryImplDecl";
+	case CXCursor_TypedefDecl: return "CXCursor_TypedefDecl";
+	case CXCursor_CXXMethod: return "CXCursor_CXXMethod";
+	case CXCursor_Namespace: return "CXCursor_Namespace";
+	case CXCursor_LinkageSpec: return "CXCursor_LinkageSpec";
+	case CXCursor_Constructor: return "CXCursor_Constructor";
+	case CXCursor_Destructor: return "CXCursor_Destructor";
+	case CXCursor_ConversionFunction: return "CXCursor_ConversionFunction";
+	case CXCursor_TemplateTypeParameter: return "CXCursor_TemplateTypeParameter";
+	case CXCursor_NonTypeTemplateParameter: return "CXCursor_NonTypeTemplateParameter";
+	case CXCursor_TemplateTemplateParameter: return "CXCursor_TemplateTemplateParameter";
+	case CXCursor_FunctionTemplate: return "CXCursor_FunctionTemplate";
+	case CXCursor_ClassTemplate: return "CXCursor_ClassTemplate";
+	case CXCursor_ClassTemplatePartialSpecialization: return "CXCursor_ClassTemplatePartialSpecialization";
+	case CXCursor_NamespaceAlias: return "CXCursor_NamespaceAlias";
+	case CXCursor_UsingDirective: return "CXCursor_UsingDirective";
+	case CXCursor_UsingDeclaration: return "CXCursor_UsingDeclaration";
+	case CXCursor_TypeAliasDecl: return "CXCursor_TypeAliasDecl";
+	case CXCursor_ObjCSynthesizeDecl: return "CXCursor_ObjCSynthesizeDecl";
+	case CXCursor_ObjCDynamicDecl: return "CXCursor_ObjCDynamicDecl";
+	case CXCursor_CXXAccessSpecifier: return "CXCursor_CXXAccessSpecifier";
+//	case CXCursor_FirstDecl: return "CXCursor_FirstDecl";
+//	case CXCursor_LastDecl: return "CXCursor_LastDecl";
+//	case CXCursor_FirstRef: return "CXCursor_FirstRef";
+	case CXCursor_ObjCSuperClassRef: return "CXCursor_ObjCSuperClassRef";
+	case CXCursor_ObjCProtocolRef: return "CXCursor_ObjCProtocolRef";
+	case CXCursor_ObjCClassRef: return "CXCursor_ObjCClassRef";
+	case CXCursor_TypeRef: return "CXCursor_TypeRef";
+	case CXCursor_CXXBaseSpecifier: return "CXCursor_CXXBaseSpecifier";
+	case CXCursor_TemplateRef: return "CXCursor_TemplateRef";
+	case CXCursor_NamespaceRef: return "CXCursor_NamespaceRef";
+	case CXCursor_MemberRef: return "CXCursor_MemberRef";
+	case CXCursor_LabelRef: return "CXCursor_LabelRef";
+	case CXCursor_OverloadedDeclRef: return "CXCursor_OverloadedDeclRef";
+	case CXCursor_VariableRef: return "CXCursor_VariableRef";
+//	case CXCursor_LastRef: return "CXCursor_LastRef";
+//	case CXCursor_FirstInvalid: return "CXCursor_FirstInvalid";
+	case CXCursor_InvalidFile: return "CXCursor_InvalidFile";
+	case CXCursor_NoDeclFound: return "CXCursor_NoDeclFound";
+	case CXCursor_NotImplemented: return "CXCursor_NotImplemented";
+	case CXCursor_InvalidCode: return "CXCursor_InvalidCode";
+//	case CXCursor_LastInvalid: return "CXCursor_LastInvalid";
+//	case CXCursor_FirstExpr: return "CXCursor_FirstExpr";
+	case CXCursor_UnexposedExpr: return "CXCursor_UnexposedExpr";
+	case CXCursor_DeclRefExpr: return "CXCursor_DeclRefExpr";
+	case CXCursor_MemberRefExpr: return "CXCursor_MemberRefExpr";
+	case CXCursor_CallExpr: return "CXCursor_CallExpr";
+	case CXCursor_ObjCMessageExpr: return "CXCursor_ObjCMessageExpr";
+	case CXCursor_BlockExpr: return "CXCursor_BlockExpr";
+	case CXCursor_IntegerLiteral: return "CXCursor_IntegerLiteral";
+	case CXCursor_FloatingLiteral: return "CXCursor_FloatingLiteral";
+	case CXCursor_ImaginaryLiteral: return "CXCursor_ImaginaryLiteral";
+	case CXCursor_StringLiteral: return "CXCursor_StringLiteral";
+	case CXCursor_CharacterLiteral: return "CXCursor_CharacterLiteral";
+	case CXCursor_ParenExpr: return "CXCursor_ParenExpr";
+	case CXCursor_UnaryOperator: return "CXCursor_UnaryOperator";
+	case CXCursor_ArraySubscriptExpr: return "CXCursor_ArraySubscriptExpr";
+	case CXCursor_BinaryOperator: return "CXCursor_BinaryOperator";
+	case CXCursor_CompoundAssignOperator: return "CXCursor_CompoundAssignOperator";
+	case CXCursor_ConditionalOperator: return "CXCursor_ConditionalOperator";
+	case CXCursor_CStyleCastExpr: return "CXCursor_CStyleCastExpr";
+	case CXCursor_CompoundLiteralExpr: return "CXCursor_CompoundLiteralExpr";
+	case CXCursor_InitListExpr: return "CXCursor_InitListExpr";
+	case CXCursor_AddrLabelExpr: return "CXCursor_AddrLabelExpr";
+	case CXCursor_StmtExpr: return "CXCursor_StmtExpr";
+	case CXCursor_GenericSelectionExpr: return "CXCursor_GenericSelectionExpr";
+	case CXCursor_GNUNullExpr: return "CXCursor_GNUNullExpr";
+	case CXCursor_CXXStaticCastExpr: return "CXCursor_CXXStaticCastExpr";
+	case CXCursor_CXXDynamicCastExpr: return "CXCursor_CXXDynamicCastExpr";
+	case CXCursor_CXXReinterpretCastExpr: return "CXCursor_CXXReinterpretCastExpr";
+	case CXCursor_CXXConstCastExpr: return "CXCursor_CXXConstCastExpr";
+	case CXCursor_CXXFunctionalCastExpr: return "CXCursor_CXXFunctionalCastExpr";
+	case CXCursor_CXXTypeidExpr: return "CXCursor_CXXTypeidExpr";
+	case CXCursor_CXXBoolLiteralExpr: return "CXCursor_CXXBoolLiteralExpr";
+	case CXCursor_CXXNullPtrLiteralExpr: return "CXCursor_CXXNullPtrLiteralExpr";
+	case CXCursor_CXXThisExpr: return "CXCursor_CXXThisExpr";
+	case CXCursor_CXXThrowExpr: return "CXCursor_CXXThrowExpr";
+	case CXCursor_CXXNewExpr: return "CXCursor_CXXNewExpr";
+	case CXCursor_CXXDeleteExpr: return "CXCursor_CXXDeleteExpr";
+	case CXCursor_UnaryExpr: return "CXCursor_UnaryExpr";
+	case CXCursor_ObjCStringLiteral: return "CXCursor_ObjCStringLiteral";
+	case CXCursor_ObjCEncodeExpr: return "CXCursor_ObjCEncodeExpr";
+	case CXCursor_ObjCSelectorExpr: return "CXCursor_ObjCSelectorExpr";
+	case CXCursor_ObjCProtocolExpr: return "CXCursor_ObjCProtocolExpr";
+	case CXCursor_ObjCBridgedCastExpr: return "CXCursor_ObjCBridgedCastExpr";
+	case CXCursor_PackExpansionExpr: return "CXCursor_PackExpansionExpr";
+	case CXCursor_SizeOfPackExpr: return "CXCursor_SizeOfPackExpr";
+	case CXCursor_LambdaExpr: return "CXCursor_LambdaExpr";
+	case CXCursor_ObjCBoolLiteralExpr: return "CXCursor_ObjCBoolLiteralExpr";
+	case CXCursor_ObjCSelfExpr: return "CXCursor_ObjCSelfExpr";
+	case CXCursor_OMPArraySectionExpr: return "CXCursor_OMPArraySectionExpr";
+//	case CXCursor_LastExpr: return "CXCursor_LastExpr";
+//	case CXCursor_FirstStmt: return "CXCursor_FirstStmt";
+	case CXCursor_UnexposedStmt: return "CXCursor_UnexposedStmt";
+	case CXCursor_LabelStmt: return "CXCursor_LabelStmt";
+	case CXCursor_CompoundStmt: return "CXCursor_CompoundStmt";
+	case CXCursor_CaseStmt: return "CXCursor_CaseStmt";
+	case CXCursor_DefaultStmt: return "CXCursor_DefaultStmt";
+	case CXCursor_IfStmt: return "CXCursor_IfStmt";
+	case CXCursor_SwitchStmt: return "CXCursor_SwitchStmt";
+	case CXCursor_WhileStmt: return "CXCursor_WhileStmt";
+	case CXCursor_DoStmt: return "CXCursor_DoStmt";
+	case CXCursor_ForStmt: return "CXCursor_ForStmt";
+	case CXCursor_GotoStmt: return "CXCursor_GotoStmt";
+	case CXCursor_IndirectGotoStmt: return "CXCursor_IndirectGotoStmt";
+	case CXCursor_ContinueStmt: return "CXCursor_ContinueStmt";
+	case CXCursor_BreakStmt: return "CXCursor_BreakStmt";
+	case CXCursor_ReturnStmt: return "CXCursor_ReturnStmt";
+	case CXCursor_GCCAsmStmt: return "CXCursor_GCCAsmStmt";
+//	case CXCursor_AsmStmt: return "CXCursor_AsmStmt";
+	case CXCursor_ObjCAtTryStmt: return "CXCursor_ObjCAtTryStmt";
+	case CXCursor_ObjCAtCatchStmt: return "CXCursor_ObjCAtCatchStmt";
+	case CXCursor_ObjCAtFinallyStmt: return "CXCursor_ObjCAtFinallyStmt";
+	case CXCursor_ObjCAtThrowStmt: return "CXCursor_ObjCAtThrowStmt";
+	case CXCursor_ObjCAtSynchronizedStmt: return "CXCursor_ObjCAtSynchronizedStmt";
+	case CXCursor_ObjCAutoreleasePoolStmt: return "CXCursor_ObjCAutoreleasePoolStmt";
+	case CXCursor_ObjCForCollectionStmt: return "CXCursor_ObjCForCollectionStmt";
+	case CXCursor_CXXCatchStmt: return "CXCursor_CXXCatchStmt";
+	case CXCursor_CXXTryStmt: return "CXCursor_CXXTryStmt";
+	case CXCursor_CXXForRangeStmt: return "CXCursor_CXXForRangeStmt";
+	case CXCursor_SEHTryStmt: return "CXCursor_SEHTryStmt";
+	case CXCursor_SEHExceptStmt: return "CXCursor_SEHExceptStmt";
+	case CXCursor_SEHFinallyStmt: return "CXCursor_SEHFinallyStmt";
+	case CXCursor_MSAsmStmt: return "CXCursor_MSAsmStmt";
+	case CXCursor_NullStmt: return "CXCursor_NullStmt";
+	case CXCursor_DeclStmt: return "CXCursor_DeclStmt";
+	case CXCursor_OMPParallelDirective: return "CXCursor_OMPParallelDirective";
+	case CXCursor_OMPSimdDirective: return "CXCursor_OMPSimdDirective";
+	case CXCursor_OMPForDirective: return "CXCursor_OMPForDirective";
+	case CXCursor_OMPSectionsDirective: return "CXCursor_OMPSectionsDirective";
+	case CXCursor_OMPSectionDirective: return "CXCursor_OMPSectionDirective";
+	case CXCursor_OMPSingleDirective: return "CXCursor_OMPSingleDirective";
+	case CXCursor_OMPParallelForDirective: return "CXCursor_OMPParallelForDirective";
+	case CXCursor_OMPParallelSectionsDirective: return "CXCursor_OMPParallelSectionsDirective";
+	case CXCursor_OMPTaskDirective: return "CXCursor_OMPTaskDirective";
+	case CXCursor_OMPMasterDirective: return "CXCursor_OMPMasterDirective";
+	case CXCursor_OMPCriticalDirective: return "CXCursor_OMPCriticalDirective";
+	case CXCursor_OMPTaskyieldDirective: return "CXCursor_OMPTaskyieldDirective";
+	case CXCursor_OMPBarrierDirective: return "CXCursor_OMPBarrierDirective";
+	case CXCursor_OMPTaskwaitDirective: return "CXCursor_OMPTaskwaitDirective";
+	case CXCursor_OMPFlushDirective: return "CXCursor_OMPFlushDirective";
+	case CXCursor_SEHLeaveStmt: return "CXCursor_SEHLeaveStmt";
+	case CXCursor_OMPOrderedDirective: return "CXCursor_OMPOrderedDirective";
+	case CXCursor_OMPAtomicDirective: return "CXCursor_OMPAtomicDirective";
+	case CXCursor_OMPForSimdDirective: return "CXCursor_OMPForSimdDirective";
+	case CXCursor_OMPParallelForSimdDirective: return "CXCursor_OMPParallelForSimdDirective";
+	case CXCursor_OMPTargetDirective: return "CXCursor_OMPTargetDirective";
+	case CXCursor_OMPTeamsDirective: return "CXCursor_OMPTeamsDirective";
+	case CXCursor_OMPTaskgroupDirective: return "CXCursor_OMPTaskgroupDirective";
+	case CXCursor_OMPCancellationPointDirective: return "CXCursor_OMPCancellationPointDirective";
+	case CXCursor_OMPCancelDirective: return "CXCursor_OMPCancelDirective";
+	case CXCursor_OMPTargetDataDirective: return "CXCursor_OMPTargetDataDirective";
+	case CXCursor_OMPTaskLoopDirective: return "CXCursor_OMPTaskLoopDirective";
+	case CXCursor_OMPTaskLoopSimdDirective: return "CXCursor_OMPTaskLoopSimdDirective";
+	case CXCursor_OMPDistributeDirective: return "CXCursor_OMPDistributeDirective";
+//	case CXCursor_LastStmt: return "CXCursor_LastStmt";
+	case CXCursor_TranslationUnit: return "CXCursor_TranslationUnit";
+//	case CXCursor_FirstAttr: return "CXCursor_FirstAttr";
+	case CXCursor_UnexposedAttr: return "CXCursor_UnexposedAttr";
+	case CXCursor_IBActionAttr: return "CXCursor_IBActionAttr";
+	case CXCursor_IBOutletAttr: return "CXCursor_IBOutletAttr";
+	case CXCursor_IBOutletCollectionAttr: return "CXCursor_IBOutletCollectionAttr";
+	case CXCursor_CXXFinalAttr: return "CXCursor_CXXFinalAttr";
+	case CXCursor_CXXOverrideAttr: return "CXCursor_CXXOverrideAttr";
+	case CXCursor_AnnotateAttr: return "CXCursor_AnnotateAttr";
+	case CXCursor_AsmLabelAttr: return "CXCursor_AsmLabelAttr";
+	case CXCursor_PackedAttr: return "CXCursor_PackedAttr";
+	case CXCursor_PureAttr: return "CXCursor_PureAttr";
+	case CXCursor_ConstAttr: return "CXCursor_ConstAttr";
+	case CXCursor_NoDuplicateAttr: return "CXCursor_NoDuplicateAttr";
+	case CXCursor_CUDAConstantAttr: return "CXCursor_CUDAConstantAttr";
+	case CXCursor_CUDADeviceAttr: return "CXCursor_CUDADeviceAttr";
+	case CXCursor_CUDAGlobalAttr: return "CXCursor_CUDAGlobalAttr";
+	case CXCursor_CUDAHostAttr: return "CXCursor_CUDAHostAttr";
+	case CXCursor_CUDASharedAttr: return "CXCursor_CUDASharedAttr";
+	case CXCursor_VisibilityAttr: return "CXCursor_VisibilityAttr";
+	case CXCursor_DLLExport: return "CXCursor_DLLExport";
+	case CXCursor_DLLImport: return "CXCursor_DLLImport";
+//	case CXCursor_LastAttr: return "CXCursor_LastAttr";
+	case CXCursor_PreprocessingDirective: return "CXCursor_PreprocessingDirective";
+	case CXCursor_MacroDefinition: return "CXCursor_MacroDefinition";
+	case CXCursor_MacroExpansion: return "CXCursor_MacroExpansion";
+//	case CXCursor_MacroInstantiation: return "CXCursor_MacroInstantiation";
+	case CXCursor_InclusionDirective: return "CXCursor_InclusionDirective";
+//	case CXCursor_FirstPreprocessing: return "CXCursor_FirstPreprocessing";
+//	case CXCursor_LastPreprocessing: return "CXCursor_LastPreprocessing";
+	case CXCursor_ModuleImportDecl: return "CXCursor_ModuleImportDecl";
+	case CXCursor_TypeAliasTemplateDecl: return "CXCursor_TypeAliasTemplateDecl";
+//	case CXCursor_FirstExtraDecl: return "CXCursor_FirstExtraDecl";
+//	case CXCursor_LastExtraDecl: return "CXCursor_LastExtraDecl";
+	case CXCursor_OverloadCandidate: return "CXCursor_OverloadCandidate";
+	default: return "CXCursor_NOT_YET_BOUND";
+	}
+}
+
+string toString(CXTypeKind kind)
+{
+	switch (kind) {
+	case CXType_Invalid: return "CXType_Invalid";
+	case CXType_Unexposed: return "CXType_Unexposed";
+	case CXType_Void: return "CXType_Void";
+	case CXType_Bool: return "CXType_Bool";
+	case CXType_Char_U: return "CXType_Char_U";
+	case CXType_UChar: return "CXType_UChar";
+	case CXType_Char16: return "CXType_Char16";
+	case CXType_Char32: return "CXType_Char32";
+	case CXType_UShort: return "CXType_UShort";
+	case CXType_UInt: return "CXType_UInt";
+	case CXType_ULong: return "CXType_ULong";
+	case CXType_ULongLong: return "CXType_ULongLong";
+	case CXType_UInt128: return "CXType_UInt128";
+	case CXType_Char_S: return "CXType_Char_S";
+	case CXType_SChar: return "CXType_SChar";
+	case CXType_WChar: return "CXType_WChar";
+	case CXType_Short: return "CXType_Short";
+	case CXType_Int: return "CXType_Int";
+	case CXType_Long: return "CXType_Long";
+	case CXType_LongLong: return "CXType_LongLong";
+	case CXType_Int128: return "CXType_Int128";
+	case CXType_Float: return "CXType_Float";
+	case CXType_Double: return "CXType_Double";
+	case CXType_LongDouble: return "CXType_LongDouble";
+	case CXType_NullPtr: return "CXType_NullPtr";
+	case CXType_Overload: return "CXType_Overload";
+	case CXType_Dependent: return "CXType_Dependent";
+	case CXType_ObjCId: return "CXType_ObjCId";
+	case CXType_ObjCClass: return "CXType_ObjCClass";
+	case CXType_ObjCSel: return "CXType_ObjCSel";
+	//case CXType_FirstBuiltin: return "CXType_FirstBuiltin";
+	//case CXType_LastBuiltin : return "CXType_LastBuiltin";
+	case CXType_Complex: return "CXType_Complex";
+	case CXType_Pointer: return "CXType_Pointer";
+	case CXType_BlockPointer: return "CXType_BlockPointer";
+	case CXType_LValueReference: return "CXType_LValueReference";
+	case CXType_RValueReference: return "CXType_RValueReference";
+	case CXType_Record: return "CXType_Record";
+	case CXType_Enum: return "CXType_Enum";
+	case CXType_Typedef: return "CXType_Typedef";
+	case CXType_ObjCInterface: return "CXType_ObjCInterface";
+	case CXType_ObjCObjectPointer: return "CXType_ObjCObjectPointer";
+	case CXType_FunctionNoProto: return "CXType_FunctionNoProto";
+	case CXType_FunctionProto: return "CXType_FunctionProto";
+	case CXType_ConstantArray: return "CXType_ConstantArray";
+	case CXType_Vector: return "CXType_Vector";
+	case CXType_IncompleteArray: return "CXType_IncompleteArray";
+	case CXType_VariableArray: return "CXType_VariableArray";
+	case CXType_DependentSizedArray: return "CXType_DependentSizedArray";
+	case CXType_MemberPointer: return "CXType_MemberPointer";
+	case CXType_Auto: return "CXType_Auto";
+	default: return "CXType_NOT_YET_BOUND";
+	}
+}
+
+
+/*
+ *
+ * Hack for broken struct return.
+ *
+ */
+
+alias clang_getCursorType = lib.clang.c.Index.clang_getCursorType;
+alias clang_getTypedefDeclUnderlyingType = lib.clang.c.Index.clang_getTypedefDeclUnderlyingType;
+alias clang_getEnumDeclIntegerType = lib.clang.c.Index.clang_getEnumDeclIntegerType;
+alias clang_Cursor_getTemplateArgumentType = lib.clang.c.Index.clang_Cursor_getTemplateArgumentType;
+alias clang_getCanonicalType = lib.clang.c.Index.clang_getCanonicalType;
+alias clang_getPointeeType = lib.clang.c.Index.clang_getPointeeType;
+alias clang_getResultType = lib.clang.c.Index.clang_getResultType;
+alias clang_getArgType = lib.clang.c.Index.clang_getArgType;
+alias clang_getCursorResultType = lib.clang.c.Index.clang_getCursorResultType;
+alias clang_getElementType = lib.clang.c.Index.clang_getElementType;
+alias clang_getArrayElementType = lib.clang.c.Index.clang_getArrayElementType;
+alias clang_Type_getClassType = lib.clang.c.Index.clang_Type_getClassType;
+alias clang_Type_getTemplateArgumentAsType = lib.clang.c.Index.clang_Type_getTemplateArgumentAsType;
+alias clang_getIBOutletCollectionType = lib.clang.c.Index.clang_getIBOutletCollectionType;
+alias clang_Cursor_getReceiverType = lib.clang.c.Index.clang_Cursor_getReceiverType;
+alias clang_getNullLocation = lib.clang.c.Index.clang_getNullLocation;
+alias clang_getLocation = lib.clang.c.Index.clang_getLocation;
+alias clang_getLocationForOffset = lib.clang.c.Index.clang_getLocationForOffset;
+alias clang_getRangeStart = lib.clang.c.Index.clang_getRangeStart;
+alias clang_getRangeEnd = lib.clang.c.Index.clang_getRangeEnd;
+alias clang_getDiagnosticLocation = lib.clang.c.Index.clang_getDiagnosticLocation;
+alias clang_getCursorLocation = lib.clang.c.Index.clang_getCursorLocation;
+alias clang_getTokenLocation = lib.clang.c.Index.clang_getTokenLocation;
+alias clang_indexLoc_getCXSourceLocation = lib.clang.c.Index.clang_indexLoc_getCXSourceLocation;
+
+
+CXType clang_getCursorType(CXCursor C)
+{
+	CXType type;
+	clang_getCursorType(out type, C);
+	return type;
+}
+
+CXType clang_getTypedefDeclUnderlyingType(CXCursor C)
+{
+	CXType type;
+	clang_getTypedefDeclUnderlyingType(out type, C);
+	return type;
+}
+
+CXType clang_getEnumDeclIntegerType(CXCursor C)
+{
+	CXType type;
+	clang_getEnumDeclIntegerType(out type, C);
+	return type;
+}
+
+CXType clang_Cursor_getTemplateArgumentType(CXCursor C, u32 I)
+{
+	CXType type;
+	clang_Cursor_getTemplateArgumentType(out type, C, I);
+	return type;
+}
+
+CXType clang_getCanonicalType(CXType T)
+{
+	CXType type;
+	clang_getCanonicalType(out type, T);
+	return type;
+}
+
+CXType clang_getPointeeType(CXType T)
+{
+	CXType type;
+	clang_getPointeeType(out type, T);
+	return type;
+}
+
+CXType clang_getResultType(CXType T)
+{
+	CXType type;
+	clang_getResultType(out type, T);
+	return type;
+}
+
+CXType clang_getArgType(CXType T, u32 i)
+{
+	CXType type;
+	clang_getArgType(out type, T, i);
+	return type;
+}
+
+CXType clang_getCursorResultType(CXCursor C)
+{
+	CXType type;
+	clang_getCursorResultType(out type, C);
+	return type;
+}
+
+CXType clang_getElementType(CXType T)
+{
+	CXType type;
+	clang_getElementType(out type, T);
+	return type;
+}
+
+CXType clang_getArrayElementType(CXType T)
+{
+	CXType type;
+	clang_getArrayElementType(out type, T);
+	return type;
+}
+
+CXType clang_Type_getClassType(CXType T)
+{
+	CXType type;
+	clang_Type_getClassType(out type, T);
+	return type;
+}
+
+CXType clang_Type_getTemplateArgumentAsType(CXType T, u32 i)
+{
+	CXType type;
+	clang_Type_getTemplateArgumentAsType(out type, T, i);
+	return type;
+}
+
+CXType clang_getIBOutletCollectionType(CXCursor C)
+{
+	CXType type;
+	clang_getIBOutletCollectionType(out type, C);
+	return type;
+}
+
+CXType clang_Cursor_getReceiverType(CXCursor C)
+{
+	CXType type;
+	clang_Cursor_getReceiverType(out type, C);
+	return type;
+}
+
+CXSourceLocation clang_getNullLocation()
+{
+	CXSourceLocation l;
+	clang_getNullLocation(out l);
+	return l;
+}
+
+CXSourceLocation clang_getLocation(CXTranslationUnit tu, CXFile file, u32 line, u32 column)
+{
+	CXSourceLocation l;
+	clang_getLocation(out l, tu, file, line, column);
+	return l;
+}
+
+CXSourceLocation clang_getLocationForOffset(CXTranslationUnit tu, CXFile file, u32 offset)
+{
+	CXSourceLocation l;
+	clang_getLocationForOffset(out l, tu, file, offset);
+	return l;
+}
+
+CXSourceLocation clang_getRangeStart(CXSourceRange range)
+{
+	CXSourceLocation l;
+	clang_getRangeStart(out l, range);
+	return l;
+}
+
+CXSourceLocation clang_getRangeEnd(CXSourceRange range)
+{
+	CXSourceLocation l;
+	clang_getRangeEnd(out l, range);
+	return l;
+}
+
+CXSourceLocation clang_getDiagnosticLocation(CXDiagnostic diag)
+{
+	CXSourceLocation l;
+	clang_getDiagnosticLocation(out l, diag);
+	return l;
+}
+
+CXSourceLocation clang_getCursorLocation(CXCursor C)
+{
+	CXSourceLocation l;
+	clang_getCursorLocation(out l, C);
+	return l;
+}
+
+CXSourceLocation clang_getTokenLocation(CXTranslationUnit tu, CXToken T)
+{
+	CXSourceLocation l;
+	clang_getTokenLocation(out l, tu, T);
+	return l;
+}
+
+CXSourceLocation clang_indexLoc_getCXSourceLocation(CXIdxLoc loc)
+{
+	CXSourceLocation l;
+	clang_indexLoc_getCXSourceLocation(out l, loc);
+	return l;
+}

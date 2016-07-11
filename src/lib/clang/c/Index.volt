@@ -374,7 +374,8 @@ struct CXSourceRange {
 /**
  * \brief Retrieve a NULL (invalid) source location.
  */
-CXSourceLocation clang_getNullLocation();
+// TODO HACK!
+void clang_getNullLocation(out CXSourceLocation, );
 
 /**
  * \brief Determine whether two source locations, which must refer into
@@ -391,7 +392,8 @@ u32 clang_equalLocations(CXSourceLocation loc1,
  * \brief Retrieves the source location associated with a given file/line/column
  * in a particular translation unit.
  */
-CXSourceLocation clang_getLocation(CXTranslationUnit tu,
+// TODO HACK!
+void clang_getLocation(out CXSourceLocation, CXTranslationUnit tu,
                                                   CXFile file,
                                                   u32 line,
                                                   u32 column);
@@ -399,7 +401,8 @@ CXSourceLocation clang_getLocation(CXTranslationUnit tu,
  * \brief Retrieves the source location associated with a given character offset
  * in a particular translation unit.
  */
-CXSourceLocation clang_getLocationForOffset(CXTranslationUnit tu,
+// TODO HACK!
+void clang_getLocationForOffset(out CXSourceLocation, CXTranslationUnit tu,
                                                            CXFile file,
                                                            u32 offset);
 
@@ -587,13 +590,15 @@ void clang_getFileLocation(CXSourceLocation location,
  * \brief Retrieve a source location representing the first character within a
  * source range.
  */
-CXSourceLocation clang_getRangeStart(CXSourceRange range);
+// TODO HACK!
+void clang_getRangeStart(out CXSourceLocation, CXSourceRange range);
 
 /**
  * \brief Retrieve a source location representing the last character within a
  * source range.
  */
-CXSourceLocation clang_getRangeEnd(CXSourceRange range);
+// TODO HACK!
+void clang_getRangeEnd(out CXSourceLocation, CXSourceRange range);
 
 /**
  * \brief Identifies an array of ranges.
@@ -2818,7 +2823,8 @@ CXCursor clang_getCursor(CXTranslationUnit, CXSourceLocation);
  * The location of a reference is where that reference occurs within the
  * source code.
  */
-CXSourceLocation clang_getCursorLocation(CXCursor);
+// TODO HACK!
+void clang_getCursorLocation(out CXSourceLocation, CXCursor);
 
 /**
  * \brief Retrieve the physical extent of the source construct referenced by
@@ -2938,14 +2944,15 @@ enum CXCallingConv {
  *
  */
 struct CXType {
-  enum CXTypeKind kind;
+  CXTypeKind kind;
   void*[2] data;
 }
 
 /**
  * \brief Retrieve the type of a CXCursor (if any).
  */
-CXType clang_getCursorType(CXCursor C);
+// TODO HACK!
+void clang_getCursorType(out CXType, CXCursor C);
 
 /**
  * \brief Pretty-print the underlying type using the rules of the
@@ -2961,7 +2968,8 @@ CXString clang_getTypeSpelling(CXType CT);
  * If the cursor does not reference a typedef declaration, an invalid type is
  * returned.
  */
-CXType clang_getTypedefDeclUnderlyingType(CXCursor C);
+// TODO HACK!
+void clang_getTypedefDeclUnderlyingType(out CXType, CXCursor C);
 
 /**
  * \brief Retrieve the integer type of an enum declaration.
@@ -2969,7 +2977,8 @@ CXType clang_getTypedefDeclUnderlyingType(CXCursor C);
  * If the cursor does not reference an enum declaration, an invalid type is
  * returned.
  */
-CXType clang_getEnumDeclIntegerType(CXCursor C);
+// TODO HACK!
+void clang_getEnumDeclIntegerType(out CXType, CXCursor C);
 
 /**
  * \brief Retrieve the integer value of an enum constant declaration as a signed
@@ -3091,7 +3100,8 @@ CXTemplateArgumentKind clang_Cursor_getTemplateArgumentKind(
  * If called with I = 0, "float", will be returned.
  * Invalid types will be returned for I == 1 or 2.
  */
-CXType clang_Cursor_getTemplateArgumentType(CXCursor C,
+// TODO HACK!
+void clang_Cursor_getTemplateArgumentType(out CXType, CXCursor C,
                                                            u32 I);
 
 /**
@@ -3150,7 +3160,8 @@ u32 clang_equalTypes(CXType A, CXType B);
  * type with all the "sugar" removed.  For example, if 'T' is a typedef
  * for 'int', the canonical type for 'T' would be 'int'.
  */
-CXType clang_getCanonicalType(CXType T);
+// TODO HACK!
+void clang_getCanonicalType(out CXType, CXType T);
 
 /**
  * \brief Determine whether a CXType has the "const" qualifier set,
@@ -3176,7 +3187,8 @@ u32 clang_isRestrictQualifiedType(CXType T);
 /**
  * \brief For pointer types, returns the type of the pointee.
  */
-CXType clang_getPointeeType(CXType T);
+// TODO HACK!
+void clang_getPointeeType(out CXType, CXType T);
 
 /**
  * \brief Return the cursor for the declaration of the given type.
@@ -3205,7 +3217,8 @@ CXCallingConv clang_getFunctionTypeCallingConv(CXType T);
  *
  * If a non-function type is passed in, an invalid type is returned.
  */
-CXType clang_getResultType(CXType T);
+// TODO HACK!
+void clang_getResultType(out CXType, CXType T);
 
 /**
  * \brief Retrieve the number of non-variadic parameters associated with a
@@ -3221,7 +3234,8 @@ int clang_getNumArgTypes(CXType T);
  * If a non-function type is passed in or the function does not have enough
  * parameters, an invalid type is returned.
  */
-CXType clang_getArgType(CXType T, u32 i);
+// TODO HACK!
+void clang_getArgType(out CXType, CXType T, u32 i);
 
 /**
  * \brief Return 1 if the CXType is a variadic function type, and 0 otherwise.
@@ -3233,7 +3247,8 @@ u32 clang_isFunctionTypeVariadic(CXType T);
  *
  * This only returns a valid type if the cursor refers to a function or method.
  */
-CXType clang_getCursorResultType(CXCursor C);
+// TODO HACK!
+void clang_getCursorResultType(out CXType, CXCursor C);
 
 /**
  * \brief Return 1 if the CXType is a POD (plain old data) type, and 0
@@ -3247,7 +3262,8 @@ u32 clang_isPODType(CXType T);
  * If a type is passed in that is not an array, complex, or vector type,
  * an invalid type is returned.
  */
-CXType clang_getElementType(CXType T);
+// TODO HACK!
+void clang_getElementType(out CXType, CXType T);
 
 /**
  * \brief Return the number of elements of an array or vector type.
@@ -3262,7 +3278,8 @@ i64 clang_getNumElements(CXType T);
  *
  * If a non-array type is passed in, an invalid type is returned.
  */
-CXType clang_getArrayElementType(CXType T);
+// TODO HACK!
+void clang_getArrayElementType(out CXType, CXType T);
 
 /**
  * \brief Return the array size of a constant array.
@@ -3321,7 +3338,8 @@ i64 clang_Type_getAlignOf(CXType T);
  *
  * If a non-member-pointer type is passed in, an invalid type is returned.
  */
-CXType clang_Type_getClassType(CXType T);
+// TODO HACK!
+void clang_Type_getClassType(out CXType, CXType T);
 
 /**
  * \brief Return the size of a type in bytes as per C++[expr.sizeof] standard.
@@ -3395,7 +3413,8 @@ int clang_Type_getNumTemplateArguments(CXType T);
  * This function only returns template type arguments and does not handle
  * template template arguments or variadic packs.
  */
-CXType clang_Type_getTemplateArgumentAsType(CXType T, u32 i);
+// TODO HACK!
+void clang_Type_getTemplateArgumentAsType(out CXType, CXType T, u32 i);
 
 /**
  * \brief Retrieve the ref-qualifier kind of a function or method.
@@ -3503,7 +3522,8 @@ CXCursor clang_getOverloadedDecl(CXCursor cursor,
  *  this function returns the collection element type.
  *
  */
-CXType clang_getIBOutletCollectionType(CXCursor);
+// TODO HACK!
+void clang_getIBOutletCollectionType(out CXType, CXCursor);
 
 /**
  * @}
@@ -3805,7 +3825,8 @@ int clang_Cursor_isDynamicCall(CXCursor C);
  * \brief Given a cursor pointing to an Objective-C message, returns the CXType
  * of the receiver.
  */
-CXType clang_Cursor_getReceiverType(CXCursor C);
+// TODO HACK!
+void clang_Cursor_getReceiverType(out CXType, CXCursor C);
 
 /**
  * \brief Property attributes for a \c CXCursor_ObjCPropertyDecl.
@@ -4198,8 +4219,8 @@ CXString clang_getTokenSpelling(CXTranslationUnit, CXToken);
 /**
  * \brief Retrieve the source location of the given token.
  */
-CXSourceLocation clang_getTokenLocation(CXTranslationUnit,
-                                                       CXToken);
+// TODO HACK!
+void clang_getTokenLocation(out CXSourceLocation, CXTranslationUnit, CXToken);
 
 /**
  * \brief Retrieve a source range that covers the given token.
@@ -5762,7 +5783,8 @@ void clang_indexLoc_getFileLocation(CXIdxLoc loc,
 /**
  * \brief Retrieve the CXSourceLocation represented by the given CXIdxLoc.
  */
-CXSourceLocation clang_indexLoc_getCXSourceLocation(CXIdxLoc loc);
+// TODO HACK!
+void clang_indexLoc_getCXSourceLocation(out CXSourceLocation, CXIdxLoc loc);
 
 /**
  * \brief Visitor invoked for each field found by a traversal.
