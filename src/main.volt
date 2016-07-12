@@ -69,7 +69,7 @@ fn walk(tu: CXTranslationUnit)
 	writefln("");
 
 	// Print all top level function decls.
-	clang_visitChildren(cursor, visitFunctiontDecls, ptr);
+	clang_visitChildren(cursor, visitAndPrint, ptr);
 }
 
 fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
@@ -103,14 +103,31 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	return CXChildVisit_Continue;
 }
 
-fn visitFunctiontDecls(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
+fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 {
-	// Early out
-	if (cursor.kind != CXCursor_FunctionDecl) {
-		return CXChildVisit_Continue;
+	switch (cursor.kind) {
+	case CXCursor_TypedefDecl: doTypedefDecl(ref cursor); break;
+	case CXCursor_FunctionDecl: doFunctionDecl(ref cursor); break;
+	default:
 	}
 
+	return CXChildVisit_Continue;
+}
 
+fn doTypedefDecl(ref cursor: CXCursor)
+{
+	type := clang_getTypedefDeclUnderlyingType(cursor);
+	tdText := clang_getCursorSpelling(cursor);
+	tdName := clang_getVoltString(tdText);
+	clang_disposeString(tdText);
+
+	writef("alias %s = ", tdName);
+	type.printType();
+	writefln(";");
+}
+
+fn doFunctionDecl(ref cursor: CXCursor)
+{
 	funcText := clang_getCursorSpelling(cursor);
 	funcName := clang_getVoltString(funcText);
 	clang_disposeString(funcText);
@@ -141,8 +158,6 @@ fn visitFunctiontDecls(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitRe
 	ret := clang_getResultType(type);
 	ret.printType();
 	writefln(";");
-
-	return CXChildVisit_Continue;
 }
 
 fn printType(type: CXType)
@@ -166,6 +181,19 @@ fn printType(type: CXType)
 		ret := clang_getResultType(type);
 		ret.printType();
 		return;
+	case CXType_Typedef:
+		cursor := clang_getTypeDeclaration(type);
+		tdText := clang_getCursorSpelling(cursor);
+		tdName := clang_getVoltString(tdText);
+		clang_disposeString(tdText);
+		writef("%s", tdName);
+		return;
+	case CXType_Char_S: return writef("char");
+	case CXType_Char_U: return writef("char");
+	case CXType_UChar: return writef("u8");
+	case CXType_SChar: return writef("i8");
+	case CXType_UShort: return writef("u16");
+	case CXType_Short: return writef("i16");
 	case CXType_UInt: return writef("u32");
 	case CXType_Int: return writef("i32");
 	case CXType_ULongLong: return writef("u64");
