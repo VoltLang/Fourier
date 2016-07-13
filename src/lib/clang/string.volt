@@ -8,16 +8,6 @@ public import lib.clang.c.CXString;
 
 string clang_getVoltString(CXString text)
 {
-	str := lib.clang.c.CXString.clang_getCString(text.data, text.private_flags);
+	str := lib.clang.c.CXString.clang_getCString(text);
 	return toString(str);
-}
-
-const(char)* clang_getCString(CXString text)
-{
-	return lib.clang.c.CXString.clang_getCString(text.data, text.private_flags);
-}
-
-void clang_disposeString(CXString text)
-{
-	lib.clang.c.CXString.clang_disposeString(text.data, text.private_flags);
 }
