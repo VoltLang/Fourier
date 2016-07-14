@@ -73,6 +73,7 @@ fn walk(tu: CXTranslationUnit)
 	visit(cursor, CXCursor.init, ptr);
 
 	writefln("");
+	writefln("import core.stdc.config;\n");
 
 	// Print all top level function decls.
 	clang_visitChildren(cursor, visitAndPrint, ptr);
@@ -277,6 +278,8 @@ fn printType(type: CXType)
 	case CXType_Short: return writef("i16");
 	case CXType_UInt: return writef("u32");
 	case CXType_Int: return writef("i32");
+	case CXType_ULong: return writef("c_long");
+	case CXType_Long: return writef("c_ulong");
 	case CXType_ULongLong: return writef("u64");
 	case CXType_LongLong: return writef("i64");
 	default: writef("%s", type.kind.toString());
