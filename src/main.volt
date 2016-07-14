@@ -262,6 +262,12 @@ fn printType(type: CXType)
 		clang_disposeString(tdText);
 		writef("%s", tdName);
 		return;
+	case CXType_Pointer:
+		base: CXType;
+		clang_getPointeeType(out base, type);
+		base.printType();
+		writef("*");
+		break;
 	case CXType_Char_S: return writef("char");
 	case CXType_Char_U: return writef("char");
 	case CXType_UChar: return writef("u8");
