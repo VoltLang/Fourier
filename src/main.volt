@@ -118,6 +118,7 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	case CXCursor_TypedefDecl: doTypedefDecl(ref cursor, w); break;
 	case CXCursor_FunctionDecl: doFunctionDecl(ref cursor, w); break;
 	case CXCursor_StructDecl: doStructDecl(ref cursor, w); break;
+	case CXCursor_VarDecl: doVarDecl(ref cursor, w); break;
 	default:
 	}
 
@@ -219,6 +220,20 @@ fn doFieldDecl(ref cursor: CXCursor, w: Walker)
 
 	w.writeIndent();
 	writef("%s : ", fName);
+	type.printType();
+	writefln(";");
+}
+
+fn doVarDecl(ref cursor: CXCursor, w: Walker)
+{
+	type: CXType;
+	clang_getCursorType(out type, cursor);
+	vText := clang_getCursorSpelling(cursor);
+	vName := clang_getVoltString(vText);
+	clang_disposeString(vText);
+
+	w.writeIndent();
+	writef("%s : ", vName);
 	type.printType();
 	writefln(";");
 }
