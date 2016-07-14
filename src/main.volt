@@ -218,8 +218,9 @@ fn doFieldDecl(ref cursor: CXCursor, w: Walker)
 	clang_disposeString(fText);
 
 	w.writeIndent();
+	writef("%s : ", fName);
 	type.printType();
-	writefln(" %s;", fName);
+	writefln(";");
 }
 
 fn printType(type: CXType)
