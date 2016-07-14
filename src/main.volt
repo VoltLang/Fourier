@@ -10,15 +10,14 @@ import watt.io;
 
 fn main(args: string[]) i32
 {
-	test();
+	test(args.length > 1 ? args[1] : "test/test.c");
 	return 0;
 }
 
-fn test()
+fn test(file: string)
 {
 	index := clang_createIndex(0, 0);
 	args := ["-I.".ptr];
-	file := "test/test.c";
 	tu := clang_parseTranslationUnit(index,
 		file.ptr, args.ptr, cast(int)args.length,
 		null, 0, CXTranslationUnit_None);
