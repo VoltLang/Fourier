@@ -118,6 +118,7 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	case CXCursor_TypedefDecl: doTypedefDecl(ref cursor, w); break;
 	case CXCursor_FunctionDecl: doFunctionDecl(ref cursor, w); break;
 	case CXCursor_StructDecl: doStructDecl(ref cursor, w); break;
+	case CXCursor_UnionDecl: doUnionDecl(ref cursor, w); break;
 	case CXCursor_VarDecl: doVarDecl(ref cursor, w); break;
 	default:
 	}
@@ -190,6 +191,16 @@ fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 
 fn doStructDecl(ref cursor: CXCursor, w: Walker)
 {
+	doAggregateDecl(ref cursor, w, "struct");
+}
+
+fn doUnionDecl(ref cursor: CXCursor, w: Walker)
+{
+	doAggregateDecl(ref cursor, w, "union");
+}
+
+fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
+{
 	structType: CXType;
 	clang_getCursorType(out structType, cursor);
 
@@ -198,7 +209,7 @@ fn doStructDecl(ref cursor: CXCursor, w: Walker)
 	clang_disposeString(structText);
 
 	w.writeIndent();
-	writef("struct %s\n", structName);
+	writef("%s %s\n", keyword, structName);
 	w.writeIndent();
 	writef("{\n");
 
@@ -207,7 +218,7 @@ fn doStructDecl(ref cursor: CXCursor, w: Walker)
 	w.indent--;
 
 	w.writeIndent();
-	writeln("}\n");
+	writeln("}");
 }
 
 fn doFieldDecl(ref cursor: CXCursor, w: Walker)
