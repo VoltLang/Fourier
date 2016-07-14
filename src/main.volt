@@ -54,7 +54,13 @@ fn printDiag(tu: CXTranslationUnit, file: string)
 
 class Walker
 {
-	int indent;
+	indent: i32;
+	tu: CXTranslationUnit;
+
+	this(tu: CXTranslationUnit)
+	{
+		this.tu = tu;
+	}
 
 	fn writeIndent()
 	{
@@ -66,7 +72,7 @@ class Walker
 
 fn walk(tu: CXTranslationUnit)
 {
-	w := new Walker();
+	w := new Walker(tu);
 	ptr := cast(void*)w;
 	cursor := clang_getTranslationUnitCursor(tu);
 
@@ -120,9 +126,17 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	case CXCursor_StructDecl: doStructDecl(ref cursor, w); break;
 	case CXCursor_UnionDecl: doUnionDecl(ref cursor, w); break;
 	case CXCursor_VarDecl: doVarDecl(ref cursor, w); break;
+	case CXCursor_IntegerLiteral: doIntLiteral(ref cursor, w); break;
 	default:
 	}
 
+	return CXChildVisit_Continue;
+}
+
+fn assignVisitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
+{
+	write(" = ");
+	visitAndPrint(cursor, p, ptr);
 	return CXChildVisit_Continue;
 }
 
@@ -232,7 +246,25 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	w.writeIndent();
 	writef("%s : ", vName);
 	type.printType();
+
+	clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
+
 	writefln(";");
+}
+
+fn doIntLiteral(ref cursor: CXCursor, w: Walker)
+{
+	range := clang_getCursorExtent(cursor);
+	tokens: CXToken*;
+	nTokens: u32;
+	clang_tokenize(w.tu, range, &tokens, &nTokens);
+	if (nTokens > 0) {
+		text := clang_getTokenSpelling(w.tu, tokens[0]);
+		str := clang_getVoltString(text);
+		clang_disposeString(text);
+		write(str);
+	}
+	clang_disposeTokens(w.tu, tokens, nTokens);
 }
 
 fn printType(type: CXType)
