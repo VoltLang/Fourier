@@ -55,7 +55,14 @@ fn printDiag(tu: CXTranslationUnit, file: string)
 
 class Walker
 {
-	int ident;
+	int indent;
+
+	fn writeIndent()
+	{
+		foreach (0 .. indent) {
+			writef("  ");
+		}
+	}
 }
 
 fn walk(tu: CXTranslationUnit)
@@ -75,11 +82,10 @@ fn walk(tu: CXTranslationUnit)
 fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 {
 	w := cast(Walker)ptr;
+	assert(w !is null);
 
-	foreach (0 .. w.ident) {
-		writef("  ");
-	}
-	foo: int;
+	w.writeIndent();
+	foo: i32;
 
 	// Print the kind of node we are standing on.
 	writef("+- %s ", cursor.kind.toString());
@@ -95,9 +101,9 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	}
 
 	// Visit children.
-	w.ident++;
+	w.indent++;
 	clang_visitChildren(cursor, visit, ptr);
-	w.ident--;
+	w.indent--;
 
 	// Done here.
 	return CXChildVisit_Continue;
@@ -105,33 +111,54 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 
 fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 {
+	w := cast(Walker)ptr;
+	assert(w !is null);
+
 	switch (cursor.kind) {
-	case CXCursor_TypedefDecl: doTypedefDecl(ref cursor); break;
-	case CXCursor_FunctionDecl: doFunctionDecl(ref cursor); break;
+	case CXCursor_TypedefDecl: doTypedefDecl(ref cursor, w); break;
+	case CXCursor_FunctionDecl: doFunctionDecl(ref cursor, w); break;
+	case CXCursor_StructDecl: doStructDecl(ref cursor, w); break;
 	default:
 	}
 
 	return CXChildVisit_Continue;
 }
 
-fn doTypedefDecl(ref cursor: CXCursor)
+fn visitFieldAndPrint(cursor: CXCursor, ptr: void*) CXVisitorResult
+{
+	w := cast(Walker)ptr;
+	assert(w !is null);
+
+	switch (cursor.kind) {
+	case CXCursor_FieldDecl:
+		doFieldDecl(ref cursor, w);
+		break;
+	default:
+	}
+
+	return CXVisit_Continue;
+}
+
+fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 {
 	type := clang_getTypedefDeclUnderlyingType(cursor);
 	tdText := clang_getCursorSpelling(cursor);
 	tdName := clang_getVoltString(tdText);
 	clang_disposeString(tdText);
 
+	w.writeIndent();
 	writef("alias %s = ", tdName);
 	type.printType();
 	writefln(";");
 }
 
-fn doFunctionDecl(ref cursor: CXCursor)
+fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 {
 	funcText := clang_getCursorSpelling(cursor);
 	funcName := clang_getVoltString(funcText);
 	clang_disposeString(funcText);
 
+	w.writeIndent();
 	writef("extern(C) fn %s(", funcName);
 
 	count := cast(u32)clang_Cursor_getNumArguments(cursor);
@@ -158,6 +185,41 @@ fn doFunctionDecl(ref cursor: CXCursor)
 	ret := clang_getResultType(type);
 	ret.printType();
 	writefln(";");
+}
+
+fn doStructDecl(ref cursor: CXCursor, w: Walker)
+{
+	structType: CXType;
+	clang_getCursorType(out structType, cursor);
+
+	structText := clang_getCursorSpelling(cursor);
+	structName := clang_getVoltString(structText);
+	clang_disposeString(structText);
+
+	w.writeIndent();
+	writef("struct %s\n", structName);
+	w.writeIndent();
+	writef("{\n");
+
+	w.indent++;
+	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
+	w.indent--;
+
+	w.writeIndent();
+	writeln("}\n");
+}
+
+fn doFieldDecl(ref cursor: CXCursor, w: Walker)
+{
+	type: CXType;
+	clang_getCursorType(out type, cursor);
+	fText := clang_getCursorSpelling(cursor);
+	fName := clang_getVoltString(fText);
+	clang_disposeString(fText);
+
+	w.writeIndent();
+	type.printType();
+	writefln(" %s;", fName);
 }
 
 fn printType(type: CXType)
