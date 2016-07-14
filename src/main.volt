@@ -133,7 +133,7 @@ fn visitFieldAndPrint(cursor: CXCursor, ptr: void*) CXVisitorResult
 
 	switch (cursor.kind) {
 	case CXCursor_FieldDecl:
-		doFieldDecl(ref cursor, w);
+		doVarDecl(ref cursor, w);
 		break;
 	default:
 	}
@@ -219,20 +219,6 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 
 	w.writeIndent();
 	writeln("}");
-}
-
-fn doFieldDecl(ref cursor: CXCursor, w: Walker)
-{
-	type: CXType;
-	clang_getCursorType(out type, cursor);
-	fText := clang_getCursorSpelling(cursor);
-	fName := clang_getVoltString(fText);
-	clang_disposeString(fText);
-
-	w.writeIndent();
-	writef("%s : ", fName);
-	type.printType();
-	writefln(";");
 }
 
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
