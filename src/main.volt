@@ -268,6 +268,7 @@ fn printType(type: CXType)
 		base.printType();
 		writef("*");
 		break;
+	case CXType_Void: return writef("void");
 	case CXType_Char_S: return writef("char");
 	case CXType_Char_U: return writef("char");
 	case CXType_UChar: return writef("u8");
