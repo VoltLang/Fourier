@@ -75,6 +75,7 @@ fn visitFieldAndPrint(cursor: CXCursor, ptr: void*) CXVisitorResult
 		doVarDecl(ref cursor, w);
 		break;
 	default:
+		break;
 	}
 
 	return CXVisit_Continue;
@@ -170,6 +171,12 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 {
 	type: CXType;
 	clang_getCursorType(out type, cursor);
+
+	if (clang_Cursor_isAnonymous(clang_getTypeDeclaration(type))) {
+		// TODO: Handle anonymous aggregates here.
+		return;
+	}
+
 	vName := getVoltString(clang_getCursorSpelling(cursor));
 
 	w.writeIndent();
