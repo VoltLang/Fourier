@@ -3,6 +3,7 @@
 module fourier.visit;
 
 import watt.io;
+import watt.text.string : split;
 
 import lib.clang;
 
@@ -84,6 +85,12 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 	type := clang_getTypedefDeclUnderlyingType(cursor);
 	tdName := getVoltString(clang_getCursorSpelling(cursor));
 
+	typeName := getVoltString(clang_getTypeSpelling(type));
+	splits := typeName.split(' ');
+	if (splits.length > 1 && tdName == splits[1]) {
+		return;
+	}
+
 	w.writeIndent();
 	writef("alias %s = ", tdName);
 	type.printType(w, tdName);
@@ -146,7 +153,7 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	}
 
 	w.writeIndent();
-	writef("%s %s %s\n", isPrivate ? "private" : "", keyword, structName);
+	writef("%s%s %s\n", isPrivate ? "private " : "", keyword, structName);
 	w.writeIndent();
 	writef("{\n");
 
