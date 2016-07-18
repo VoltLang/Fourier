@@ -6,6 +6,8 @@ import watt.io : writef;
 
 import lib.clang;
 
+import fourier.walker;
+
 /**
  * Get a Volt string from a CXString.
  * This function will dispose the CXString.
@@ -17,7 +19,7 @@ fn getVoltString(text : CXString) string
 	return str;
 }
 
-fn printType(type: CXType)
+fn printType(type: CXType, walker: Walker, id: string = "")
 {
 	switch (type.kind) {
 	case CXType_Invalid: return;
@@ -31,12 +33,12 @@ fn printType(type: CXType)
 			}
 
 			arg := clang_getArgType(type, i);
-			arg.printType();
+			arg.printType(walker, id);
 		}
 		writef(") ");
 
 		ret := clang_getResultType(type);
-		ret.printType();
+		ret.printType(walker, id);
 		return;
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
@@ -46,8 +48,14 @@ fn printType(type: CXType)
 	case CXType_Pointer:
 		base: CXType;
 		clang_getPointeeType(out base, type);
-		base.printType();
+		base.printType(walker, id);
 		writef("*");
+		break;
+	case CXType_Unexposed:
+		if (id == "") {
+			goto default;
+		}
+		writef("%s", walker.getAnonymousName(id));
 		break;
 	case CXType_Void: return writef("void");
 	case CXType_Char_S: return writef("char");

@@ -24,7 +24,7 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	type := clang_getCursorType(cursor);
 	if (type.kind != CXType_Invalid) {
 		writef("   \"");
-		type.printType();
+		type.printType(w);
 		writefln("\"");
 	} else {
 		writefln("");
@@ -86,7 +86,7 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 
 	w.writeIndent();
 	writef("alias %s = ", tdName);
-	type.printType();
+	type.printType(w, tdName);
 	writefln(";");
 }
 
@@ -110,14 +110,14 @@ fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 			writef("%s : ", argName);
 		}
 		type := clang_getCursorType(arg);
-		type.printType();
+		type.printType(w);
 	}
 
 	writef(") ");
 
 	type := clang_getCursorType(cursor);
 	ret := clang_getResultType(type);
-	ret.printType();
+	ret.printType(w);
 	writefln(";");
 }
 
@@ -166,7 +166,7 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 
 	w.writeIndent();
 	writef("%s : ", vName);
-	type.printType();
+	type.printType(w, vName);
 
 	clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
 
