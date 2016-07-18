@@ -6,6 +6,17 @@ import watt.io : writef;
 
 import lib.clang;
 
+/**
+ * Get a Volt string from a CXString.
+ * This function will dispose the CXString.
+ */
+fn getVoltString(text : CXString) string
+{
+	str := clang_getVoltString(text);
+	clang_disposeString(text);
+	return str;
+}
+
 fn printType(type: CXType)
 {
 	switch (type.kind) {
@@ -29,9 +40,7 @@ fn printType(type: CXType)
 		return;
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
-		tdText := clang_getCursorSpelling(cursor);
-		tdName := clang_getVoltString(tdText);
-		clang_disposeString(tdText);
+		tdName := getVoltString(clang_getCursorSpelling(cursor));
 		writef("%s", tdName);
 		return;
 	case CXType_Pointer:

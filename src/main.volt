@@ -7,6 +7,7 @@ import watt.io;
 import lib.clang;
 
 import fourier.walker;
+import fourier.util;
 
 fn main(args: string[]) i32
 {
@@ -45,8 +46,7 @@ fn printDiag(tu: CXTranslationUnit, file: string)
 		text = clang_getDiagnosticSpelling(diag);
 
 		clang_getSpellingLocation(loc, null, &line, &column, null);
-		info = clang_getVoltString(text);
-		clang_disposeString(text);
+		info = getVoltString(text);
 
 		output.writefln("%s:%s:%s info %s", file, line, column, info);
 	}

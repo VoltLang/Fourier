@@ -82,9 +82,7 @@ fn visitFieldAndPrint(cursor: CXCursor, ptr: void*) CXVisitorResult
 fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 {
 	type := clang_getTypedefDeclUnderlyingType(cursor);
-	tdText := clang_getCursorSpelling(cursor);
-	tdName := clang_getVoltString(tdText);
-	clang_disposeString(tdText);
+	tdName := getVoltString(clang_getCursorSpelling(cursor));
 
 	w.writeIndent();
 	writef("alias %s = ", tdName);
@@ -94,9 +92,7 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 
 fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 {
-	funcText := clang_getCursorSpelling(cursor);
-	funcName := clang_getVoltString(funcText);
-	clang_disposeString(funcText);
+	funcName := getVoltString(clang_getCursorSpelling(cursor));
 
 	w.writeIndent();
 	writef("extern(C) fn %s(", funcName);
@@ -108,9 +104,7 @@ fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 		}
 
 		arg := clang_Cursor_getArgument(cursor, i);
-		argText := clang_getCursorSpelling(arg);
-		argName := clang_getVoltString(argText);
-		clang_disposeString(argText);
+		argName := getVoltString(clang_getCursorSpelling(arg));
 
 		if (argName !is null) {
 			writef("%s : ", argName);
@@ -142,15 +136,11 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	structType: CXType;
 	clang_getCursorType(out structType, cursor);
 
-	structText := clang_getCursorSpelling(cursor);
-	structName := clang_getVoltString(structText);
-	clang_disposeString(structText);
+	structName := getVoltString(clang_getCursorSpelling(cursor));
 	isPrivate := false;
 
 	if (structName == "") {
-		idText := clang_getTypeSpelling(structType);
-		idName := clang_getVoltString(idText);
-		clang_disposeString(idText);
+		idName := getVoltString(clang_getTypeSpelling(structType));
 		structName = w.getAnonymousName(idName);
 		isPrivate = true;
 	}
@@ -172,9 +162,7 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 {
 	type: CXType;
 	clang_getCursorType(out type, cursor);
-	vText := clang_getCursorSpelling(cursor);
-	vName := clang_getVoltString(vText);
-	clang_disposeString(vText);
+	vName := getVoltString(clang_getCursorSpelling(cursor));
 
 	w.writeIndent();
 	writef("%s : ", vName);
@@ -192,9 +180,7 @@ fn doIntLiteral(ref cursor: CXCursor, w: Walker)
 	nTokens: u32;
 	clang_tokenize(w.tu, range, &tokens, &nTokens);
 	if (nTokens > 0) {
-		text := clang_getTokenSpelling(w.tu, tokens[0]);
-		str := clang_getVoltString(text);
-		clang_disposeString(text);
+		str := getVoltString(clang_getTokenSpelling(w.tu, tokens[0]));
 		write(str);
 	}
 	clang_disposeTokens(w.tu, tokens, nTokens);
