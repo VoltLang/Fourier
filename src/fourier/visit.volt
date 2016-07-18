@@ -85,6 +85,7 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 	type := clang_getTypedefDeclUnderlyingType(cursor);
 	tdName := getVoltString(clang_getCursorSpelling(cursor));
 
+	// struct Foo {}; typedef struct Foo Foo;
 	typeName := getVoltString(clang_getTypeSpelling(type));
 	splits := typeName.split(' ');
 	if (splits.length > 1 && tdName == splits[1]) {
