@@ -6,6 +6,8 @@ import lib.clang;
 
 import watt.conv;
 import watt.io;
+import watt.text.format : format;
+import watt.math.random : RandomGenerator;
 
 
 fn main(args: string[]) i32
@@ -56,10 +58,13 @@ class Walker
 {
 	indent: i32;
 	tu: CXTranslationUnit;
+	random: RandomGenerator;
+	names: string[string];
 
 	this(tu: CXTranslationUnit)
 	{
 		this.tu = tu;
+		this.names["hi"] = "hello";
 	}
 
 	fn writeIndent()
@@ -67,6 +72,15 @@ class Walker
 		foreach (0 .. indent) {
 			writef("  ");
 		}
+	}
+
+	fn getAnonymousName(id : string) string
+	{
+		if (p := id in names) {
+			return *p;
+		}
+		names[id] = format("__%sAnon%s", id, random.randomString(6));
+		return names[id];
 	}
 }
 
@@ -221,9 +235,18 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	structText := clang_getCursorSpelling(cursor);
 	structName := clang_getVoltString(structText);
 	clang_disposeString(structText);
+	isPrivate := false;
+
+	if (structName == "") {
+		idText := clang_getTypeSpelling(structType);
+		idName := clang_getVoltString(idText);
+		clang_disposeString(idText);
+		structName = w.getAnonymousName(idName);
+		isPrivate = true;
+	}
 
 	w.writeIndent();
-	writef("%s %s\n", keyword, structName);
+	writef("%s %s %s\n", isPrivate ? "private" : "", keyword, structName);
 	w.writeIndent();
 	writef("{\n");
 
