@@ -5,6 +5,7 @@ module fourier.walker;
 import watt.io;
 import watt.text.format : format;
 import watt.math.random : RandomGenerator;
+import core.stdc.time : time;
 
 import lib.clang;
 
@@ -22,7 +23,7 @@ class Walker
 	this(tu: CXTranslationUnit)
 	{
 		this.tu = tu;
-		this.names["hi"] = "hello";
+		random.seed(cast(u32)time(null));
 	}
 
 	fn writeIndent()
