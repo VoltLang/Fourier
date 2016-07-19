@@ -195,7 +195,9 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	clang_getCursorType(out type, cursor);
 
 	declType := clang_getTypeDeclaration(type);
-	if (clang_Cursor_isAnonymous(declType)) {
+	if (clang_Cursor_isAnonymous(declType) &&
+	    (declType.kind == CXCursor_UnionDecl ||
+	    declType.kind == CXCursor_StructDecl)) {
 		// TODO: Figure out a cleaner way to get this information.
 		isUnion := getVoltString(clang_getTypeSpelling(type)).indexOf("union") >= 0;
 		randomName := "__Anon" ~ w.random.randomString(6);
