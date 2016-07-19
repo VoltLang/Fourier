@@ -88,8 +88,10 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 
 	// struct Foo {}; typedef struct Foo Foo;
 	typeName := getVoltString(clang_getTypeSpelling(type));
-	splits := typeName.split(' ');
-	if (splits.length > 1 && tdName == splits[1]) {
+	canonical : CXType;
+	clang_getCanonicalType(out canonical, type);
+	canonicalName := getVoltString(clang_getTypeSpelling(canonical));
+	if (tdName != canonicalName && canonical.kind == CXTypeKind.CXType_Record) {
 		return;
 	}
 
