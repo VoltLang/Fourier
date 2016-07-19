@@ -16,6 +16,8 @@ class Walker
 	tu: CXTranslationUnit;
 	random: RandomGenerator;
 	names: string[string];
+	delayedAggregates: CXCursor[string];
+	anonAggregateVarCounters: i32[];
 
 	this(tu: CXTranslationUnit)
 	{
@@ -37,6 +39,34 @@ class Walker
 		}
 		names[id] = format("__%sAnon%s", id, random.randomString(6));
 		return names[id];
+	}
+
+	/**
+	 * Call before visiting the fields of an aggregate.
+	 */
+	fn pushAggregate()
+	{
+		anonAggregateVarCounters ~= 0;
+	}
+
+	fn popAggregate()
+	{
+		anonAggregateVarCounters = anonAggregateVarCounters[0 .. $-1];
+	}
+
+	/**
+	 * Get a variable name for an anonymous struct/union entry.
+	 * Must be called after pushAggregate().
+	 */
+	fn getAnonymousAggregateVarName(prefix: string) string
+	{
+		i := anonAggregateVarCounters[$-1]++;
+		return format("%s%s", prefix, i);
+	}
+
+	fn delayAggregate(declarationLine: string, cursor: CXCursor)
+	{
+		delayedAggregates[declarationLine] = cursor;
 	}
 }
 

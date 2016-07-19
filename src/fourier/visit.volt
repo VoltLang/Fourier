@@ -3,7 +3,7 @@
 module fourier.visit;
 
 import watt.io;
-import watt.text.string : split;
+import watt.text.string : indexOf;
 
 import lib.clang;
 
@@ -53,6 +53,11 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	case CXCursor_VarDecl: doVarDecl(ref cursor, w); break;
 	case CXCursor_IntegerLiteral: doIntLiteral(ref cursor, w); break;
 	default:
+	}
+
+	foreach (_decl, _cursor; w.delayedAggregates) {
+		doExplicitAggregateDecl(ref _cursor, w, _decl);
+		w.delayedAggregates.remove(_decl);
 	}
 
 	return CXChildVisit_Continue;
@@ -142,6 +147,19 @@ fn doUnionDecl(ref cursor: CXCursor, w: Walker)
 	doAggregateDecl(ref cursor, w, "union");
 }
 
+fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
+{
+	structType: CXType;
+	clang_getCursorType(out structType, cursor);
+	w.writeIndent();
+	writeln(decl);
+	writeln("{");
+	w.indent++;
+	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
+	w.indent--;
+	writeln("}");
+}
+
 fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 {
 	structType: CXType;
@@ -162,7 +180,9 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	writef("{\n");
 
 	w.indent++;
+	w.pushAggregate();
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
+	w.popAggregate();
 	w.indent--;
 
 	w.writeIndent();
@@ -174,8 +194,15 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	type: CXType;
 	clang_getCursorType(out type, cursor);
 
-	if (clang_Cursor_isAnonymous(clang_getTypeDeclaration(type))) {
-		// TODO: Handle anonymous aggregates here.
+	declType := clang_getTypeDeclaration(type);
+	if (clang_Cursor_isAnonymous(declType)) {
+		// TODO: Figure out a cleaner way to get this information.
+		isUnion := getVoltString(clang_getTypeSpelling(type)).indexOf("union") >= 0;
+		randomName := "__Anon" ~ w.random.randomString(6);
+		w.delayAggregate((isUnion ? "union " : "struct ") ~ randomName, cursor);
+		w.writeIndent();
+		writefln("%s : %s;", w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
+		         randomName);
 		return;
 	}
 
