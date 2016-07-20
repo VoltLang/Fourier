@@ -67,6 +67,6 @@ fn printDiag(tu: CXTranslationUnit, file: string)
 		clang_getSpellingLocation(loc, null, &line, &column, null);
 		info = getVoltString(text);
 
-		output.writefln("%s:%s:%s info %s", file, line, column, info);
+		error.writefln("%s:%s:%s info %s", file, line, column, info);
 	}
 }
