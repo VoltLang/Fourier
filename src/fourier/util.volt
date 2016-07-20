@@ -93,6 +93,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Long: return writef("c_ulong");
 	case CXType_ULongLong: return writef("u64");
 	case CXType_LongLong: return writef("i64");
+	case CXType_Bool: return writef("bool");
 	default: writef("%s", type.kind.toString());
 	}
 }
