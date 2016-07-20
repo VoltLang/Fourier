@@ -12,10 +12,23 @@ import fourier.util;
 
 fn main(args: string[]) i32
 {
-	bool printDebug;
+	bool printDebug, printUsage;
 	getopt(ref args, "debug|d", ref printDebug);
+	getopt(ref args, "help|h", ref printUsage);
+	if (printUsage) {
+		usage();
+		return 0;
+	}
+
 	test(args.length > 1 ? args[1] : "test/test.c", printDebug);
 	return 0;
+}
+
+fn usage()
+{
+	writeln("fourier [flags] <C source file>");
+	writeln("\t--debug|-d  print additional information about the source file.");
+	writeln("\t--help|-h   print this message and exit.");
 }
 
 fn test(file: string, printDebug: bool)
