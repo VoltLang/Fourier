@@ -53,7 +53,11 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
 		tdName := getVoltString(clang_getCursorSpelling(cursor));
-		writef("%s", tdName);
+		if (isVaList(tdName)) {
+			writef("va_list");
+		} else {
+			writef("%s", tdName);
+		}
 		return;
 	case CXType_Pointer:
 		base: CXType;
@@ -96,4 +100,9 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Bool: return writef("bool");
 	default: writef("%s", type.kind.toString());
 	}
+}
+
+fn isVaList(decl: string) bool
+{
+	return decl == "__builtin_va_list";
 }

@@ -89,6 +89,8 @@ fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
 	}
 
 	writefln("module %s;", w.moduleName);
+	// TODO: Dynamically determine when these are needed.
+	writeln("import watt.varargs;");
 	writeln("import core.stdc.config;\n");
 
 	// Print all top level function decls.
