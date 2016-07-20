@@ -51,6 +51,19 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		base.printType(walker, id);
 		writef("*");
 		break;
+	case CXType_IncompleteArray:
+		base: CXType;
+		clang_getArrayElementType(out base, type);
+		base.printType(walker, id);
+		writef("*");
+		break;
+	case CXType_ConstantArray:
+		base: CXType;
+		clang_getArrayElementType(out base, type);
+		sz: i64 = clang_getArraySize(type);
+		base.printType(walker, id);
+		writef("[%s]", sz);
+		break;
 	case CXType_Unexposed:
 		if (id == "") {
 			goto default;
