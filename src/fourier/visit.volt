@@ -65,7 +65,7 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 
 fn assignVisitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 {
-	if (p.kind == CXCursor_FieldDecl) {
+	if (cursor.kind != CXCursor_VarDecl) {
 		return CXChildVisit_Continue;
 	}
 	write(" = ");
