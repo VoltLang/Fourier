@@ -214,6 +214,9 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	vName := getVoltString(clang_getCursorSpelling(cursor));
 
 	w.writeIndent();
+	if (w.isGlobal()) {
+		writef("global ");
+	}
 	writef("%s : ", vName);
 	type.printType(w, vName);
 

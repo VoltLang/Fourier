@@ -71,6 +71,11 @@ class Walker
 	{
 		delayedAggregates[declarationLine] = cursor;
 	}
+
+	fn isGlobal() bool
+	{
+		return anonAggregateVarCounters.length == 0;
+	}
 }
 
 fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
