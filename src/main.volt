@@ -3,6 +3,7 @@
 module main;
 
 import watt.io;
+import watt.text.getopt;
 
 import lib.clang;
 
@@ -11,11 +12,13 @@ import fourier.util;
 
 fn main(args: string[]) i32
 {
-	test(args.length > 1 ? args[1] : "test/test.c");
+	bool printDebug;
+	getopt(ref args, "debug|d", ref printDebug);
+	test(args.length > 1 ? args[1] : "test/test.c", printDebug);
 	return 0;
 }
 
-fn test(file: string)
+fn test(file: string, printDebug: bool)
 {
 	index := clang_createIndex(0, 0);
 	args := ["-I.".ptr];
@@ -24,7 +27,7 @@ fn test(file: string)
 		null, 0, CXTranslationUnit_None);
 
 	tu.printDiag(file);
-	tu.walk();
+	tu.walk(printDebug);
 
 	clang_disposeTranslationUnit(tu);
 	clang_disposeIndex(index);

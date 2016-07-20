@@ -71,13 +71,15 @@ class Walker
 	}
 }
 
-fn walk(tu: CXTranslationUnit)
+fn walk(tu: CXTranslationUnit, printDebug: bool)
 {
 	w := new Walker(tu);
 	ptr := cast(void*)w;
 	cursor := clang_getTranslationUnitCursor(tu);
 
-	visit(cursor, CXCursor.init, ptr);
+	if (printDebug) {
+		visit(cursor, CXCursor.init, ptr);
+	}
 
 	writefln("");
 	writefln("import core.stdc.config;\n");
