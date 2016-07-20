@@ -3,6 +3,7 @@
 module fourier.util;
 
 import watt.io : writef;
+import watt.path : baseName, extension;
 
 import lib.clang;
 
@@ -17,6 +18,15 @@ fn getVoltString(text : CXString) string
 	str := clang_getVoltString(text);
 	clang_disposeString(text);
 	return str;
+}
+
+/**
+ * Given a path to a C source file or header, return a string
+ * usable as a module name.
+ */
+fn getModuleName(path: string) string
+{
+	return baseName(path, extension(path));
 }
 
 fn printType(type: CXType, walker: Walker, id: string = "")

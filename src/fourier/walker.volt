@@ -15,14 +15,16 @@ class Walker
 {
 	indent: i32;
 	tu: CXTranslationUnit;
+	moduleName: string;
 	random: RandomGenerator;
 	names: string[string];
 	delayedAggregates: CXCursor[string];
 	anonAggregateVarCounters: i32[];
 
-	this(tu: CXTranslationUnit)
+	this(tu: CXTranslationUnit, moduleName: string)
 	{
 		this.tu = tu;
+		this.moduleName = moduleName;
 		random.seed(cast(u32)time(null));
 	}
 
@@ -71,9 +73,9 @@ class Walker
 	}
 }
 
-fn walk(tu: CXTranslationUnit, printDebug: bool)
+fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
 {
-	w := new Walker(tu);
+	w := new Walker(tu, moduleName);
 	ptr := cast(void*)w;
 	cursor := clang_getTranslationUnitCursor(tu);
 
@@ -81,8 +83,8 @@ fn walk(tu: CXTranslationUnit, printDebug: bool)
 		visit(cursor, CXCursor.init, ptr);
 	}
 
-	writefln("");
-	writefln("import core.stdc.config;\n");
+	writefln("module %s;", w.moduleName);
+	writeln("import core.stdc.config;\n");
 
 	// Print all top level function decls.
 	clang_visitChildren(cursor, visitAndPrint, ptr);

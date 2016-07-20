@@ -40,7 +40,7 @@ fn test(file: string, printDebug: bool)
 		null, 0, CXTranslationUnit_None);
 
 	tu.printDiag(file);
-	tu.walk(printDebug);
+	tu.walk(printDebug, getModuleName(file));
 
 	clang_disposeTranslationUnit(tu);
 	clang_disposeIndex(index);
