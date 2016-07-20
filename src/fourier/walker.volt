@@ -20,6 +20,7 @@ class Walker
 	names: string[string];
 	delayedAggregates: CXCursor[string];
 	anonAggregateVarCounters: i32[];
+	aggregateCursors: CXCursor[];
 
 	this(tu: CXTranslationUnit, moduleName: string)
 	{
@@ -47,13 +48,15 @@ class Walker
 	/**
 	 * Call before visiting the fields of an aggregate.
 	 */
-	fn pushAggregate()
+	fn pushAggregate(cursor: CXCursor)
 	{
+		aggregateCursors ~= cursor;
 		anonAggregateVarCounters ~= 0;
 	}
 
 	fn popAggregate()
 	{
+		aggregateCursors = aggregateCursors[0 .. $-1];
 		anonAggregateVarCounters = anonAggregateVarCounters[0 .. $-1];
 	}
 

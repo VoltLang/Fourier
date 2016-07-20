@@ -79,6 +79,14 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		writef("[%s]", sz);
 		break;
 	case CXType_Unexposed:
+		if (walker.aggregateCursors.length > 0 &&
+			clang_equalCursors(walker.aggregateCursors[$-1],
+			clang_getTypeDeclaration(type))) {
+
+			writef(getVoltString(
+				clang_getCursorSpelling(walker.aggregateCursors[$-1])));
+			break;
+		}
 		if (id == "") {
 			goto default;
 		}

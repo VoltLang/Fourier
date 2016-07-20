@@ -183,7 +183,7 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	writef("{\n");
 
 	w.indent++;
-	w.pushAggregate();
+	w.pushAggregate(cursor);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();
 	w.indent--;
