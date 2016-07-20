@@ -12,26 +12,29 @@ import fourier.util;
 
 fn main(args: string[]) i32
 {
-	bool printDebug, printUsage;
+	printDebug, printUsage : bool;
+	moduleName : string;
 	getopt(ref args, "debug|d", ref printDebug);
 	getopt(ref args, "help|h", ref printUsage);
+	getopt(ref args, "module|m", ref moduleName);
 	if (printUsage) {
 		usage();
 		return 0;
 	}
 
-	test(args.length > 1 ? args[1] : "test/test.c", printDebug);
+	test(args.length > 1 ? args[1] : "test/test.c", printDebug, moduleName);
 	return 0;
 }
 
 fn usage()
 {
 	writeln("fourier [flags] <C source file>");
-	writeln("\t--debug|-d  print additional information about the source file.");
-	writeln("\t--help|-h   print this message and exit.");
+	writeln("\t--debug|-d   print additional information about the source file.");
+	writeln("\t--help|-h    print this message and exit.");
+	writeln("\t--module|-m  override the default module name for the created module.");
 }
 
-fn test(file: string, printDebug: bool)
+fn test(file: string, printDebug: bool, moduleName: string)
 {
 	index := clang_createIndex(0, 0);
 	args := ["-I.".ptr];
@@ -40,7 +43,7 @@ fn test(file: string, printDebug: bool)
 		null, 0, CXTranslationUnit_None);
 
 	tu.printDiag(file);
-	tu.walk(printDebug, getModuleName(file));
+	tu.walk(printDebug, moduleName != "" ? moduleName : getModuleName(file));
 
 	clang_disposeTranslationUnit(tu);
 	clang_disposeIndex(index);
