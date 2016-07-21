@@ -33,7 +33,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 {
 	switch (type.kind) {
 	case CXType_Invalid: return;
-	case CXType_FunctionProto:
+	case CXType_FunctionProto, CXType_FunctionNoProto:
 		writef("fn (");
 		count := cast(u32)clang_getNumArgTypes(type);
 
@@ -79,18 +79,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		writef("[%s]", sz);
 		break;
 	case CXType_Unexposed:
-		if (walker.aggregateCursors.length > 0 &&
-			clang_equalCursors(walker.aggregateCursors[$-1],
-			clang_getTypeDeclaration(type))) {
-
-			writef(getVoltString(
-				clang_getCursorSpelling(walker.aggregateCursors[$-1])));
-			break;
-		}
-		if (id == "") {
-			goto default;
-		}
-		writef("%s", walker.getAnonymousName(id));
+		printUnexposedType(type, walker, id);
 		break;
 	case CXType_Void: return writef("void");
 	case CXType_Char_S: return writef("char");
@@ -108,6 +97,29 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Bool: return writef("bool");
 	default: writef("%s", type.kind.toString());
 	}
+}
+
+fn printUnexposedType(type: CXType, walker: Walker, id: string = "")
+{
+	canonicalType: CXType;
+	clang_getCanonicalType(out canonicalType, type);
+	if (!clang_equalTypes(type, canonicalType)) {
+		printType(canonicalType, walker, id);
+		return;
+	}
+	if (walker.aggregateCursors.length > 0 &&
+		clang_equalCursors(walker.aggregateCursors[$-1],
+		clang_getTypeDeclaration(type))) {
+
+		writef(getVoltString(
+			clang_getCursorSpelling(walker.aggregateCursors[$-1])));
+		return;
+	}
+	if (id == "") {
+		writef("%s", type.kind.toString());
+		return;
+	}
+	writef("%s", walker.getAnonymousName(id));
 }
 
 fn isVaList(decl: string) bool
