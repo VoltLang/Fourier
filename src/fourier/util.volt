@@ -52,7 +52,9 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		writef(") ");
 
 		ret := clang_getResultType(type);
+		write("(");
 		ret.printType(walker, id);
+		write(")");
 		break;
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
