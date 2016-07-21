@@ -36,7 +36,13 @@ class Walker
 		}
 	}
 
-	fn getAnonymousName(id : string) string
+	/// Returns true if an anonymous name has been set for id.
+	fn hasAnonymousName(id: string) bool
+	{
+		return (id in names) !is null;
+	}
+
+	fn getAnonymousName(id: string) string
 	{
 		if (p := id in names) {
 			return *p;

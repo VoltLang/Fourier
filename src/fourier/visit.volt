@@ -98,8 +98,9 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 	typeName := getVoltString(clang_getTypeSpelling(type));
 	canonical : CXType;
 	clang_getCanonicalType(out canonical, type);
-	canonicalName := getVoltString(clang_getTypeSpelling(canonical));
-	if (tdName != canonicalName && canonical.kind == CXTypeKind.CXType_Record) {
+	canonicalCursor := clang_getTypeDeclaration(canonical);
+	canonicalName := getVoltString(clang_getCursorSpelling(canonicalCursor));
+	if (tdName == canonicalName && canonical.kind == CXTypeKind.CXType_Record) {
 		return;
 	}
 

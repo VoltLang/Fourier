@@ -2,7 +2,7 @@
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
 module fourier.util;
 
-import watt.io : writef;
+import watt.io : writef, write;
 import watt.path : baseName, extension;
 
 import lib.clang;
@@ -78,9 +78,22 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		base.printType(walker, id);
 		writef("[%s]", sz);
 		break;
-	case CXType_Unexposed:
-		printUnexposedType(type, walker, id);
+	case CXType_Record:
+		if (id != "" && walker.hasAnonymousName(id)) {
+			write(walker.getAnonymousName(id));
+			break;
+		}
+		cursor := clang_getTypeDeclaration(type);
+		write(getVoltString(clang_getCursorSpelling(cursor)));
 		break;
+	case CXType_Unexposed:
+		canonicalType: CXType;
+		clang_getCanonicalType(out canonicalType, type);
+		if (!clang_equalTypes(type, canonicalType)) {
+			printType(canonicalType, walker, id);
+			break;
+		}
+		goto default;
 	case CXType_Void: return writef("void");
 	case CXType_Char_S: return writef("char");
 	case CXType_Char_U: return writef("char");
@@ -97,29 +110,6 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Bool: return writef("bool");
 	default: writef("%s", type.kind.toString());
 	}
-}
-
-fn printUnexposedType(type: CXType, walker: Walker, id: string = "")
-{
-	canonicalType: CXType;
-	clang_getCanonicalType(out canonicalType, type);
-	if (!clang_equalTypes(type, canonicalType)) {
-		printType(canonicalType, walker, id);
-		return;
-	}
-	if (walker.aggregateCursors.length > 0 &&
-		clang_equalCursors(walker.aggregateCursors[$-1],
-		clang_getTypeDeclaration(type))) {
-
-		writef(getVoltString(
-			clang_getCursorSpelling(walker.aggregateCursors[$-1])));
-		return;
-	}
-	if (id == "") {
-		writef("%s", type.kind.toString());
-		return;
-	}
-	writef("%s", walker.getAnonymousName(id));
 }
 
 fn isVaList(decl: string) bool
