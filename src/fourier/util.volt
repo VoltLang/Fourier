@@ -31,6 +31,10 @@ fn getModuleName(path: string) string
 
 fn printType(type: CXType, walker: Walker, id: string = "")
 {
+	isConst := clang_isConstQualifiedType(type);
+	if (isConst) {
+		write("const(");
+	}
 	switch (type.kind) {
 	case CXType_Invalid: return;
 	case CXType_FunctionProto, CXType_FunctionNoProto:
@@ -49,7 +53,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 
 		ret := clang_getResultType(type);
 		ret.printType(walker, id);
-		return;
+		break;
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
 		tdName := getVoltString(clang_getCursorSpelling(cursor));
@@ -58,7 +62,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 		} else {
 			writef("%s", tdName);
 		}
-		return;
+		break;
 	case CXType_Pointer:
 		base: CXType;
 		clang_getPointeeType(out base, type);
@@ -94,21 +98,24 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 			break;
 		}
 		goto default;
-	case CXType_Void: return writef("void");
-	case CXType_Char_S: return writef("char");
-	case CXType_Char_U: return writef("char");
-	case CXType_UChar: return writef("u8");
-	case CXType_SChar: return writef("i8");
-	case CXType_UShort: return writef("u16");
-	case CXType_Short: return writef("i16");
-	case CXType_UInt: return writef("u32");
-	case CXType_Int: return writef("i32");
-	case CXType_ULong: return writef("c_long");
-	case CXType_Long: return writef("c_ulong");
-	case CXType_ULongLong: return writef("u64");
-	case CXType_LongLong: return writef("i64");
-	case CXType_Bool: return writef("bool");
-	default: writef("%s", type.kind.toString());
+	case CXType_Void: writef("void"); break;
+	case CXType_Char_S: writef("char"); break;
+	case CXType_Char_U: writef("char"); break;
+	case CXType_UChar: writef("u8"); break;
+	case CXType_SChar: writef("i8"); break;
+	case CXType_UShort: writef("u16"); break;
+	case CXType_Short: writef("i16"); break;
+	case CXType_UInt: writef("u32"); break;
+	case CXType_Int: writef("i32"); break;
+	case CXType_ULong: writef("c_long"); break;
+	case CXType_Long: writef("c_ulong"); break;
+	case CXType_ULongLong: writef("u64"); break;
+	case CXType_LongLong: writef("i64"); break;
+	case CXType_Bool: writef("bool"); break;
+	default: writef("%s", type.kind.toString()); break;
+	}
+	if (isConst) {
+		write(")");
 	}
 }
 
