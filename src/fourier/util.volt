@@ -116,6 +116,7 @@ fn printType(type: CXType, walker: Walker, id: string = "")
 	case CXType_Bool: writef("bool"); break;
 	case CXType_Float: writef("f32"); break;
 	case CXType_Double: writef("f64"); break;
+	case CXType_LongDouble: writef("f64"); break;
 	default: writef("%s", type.kind.toString()); break;
 	}
 	if (isConst) {
