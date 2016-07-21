@@ -158,7 +158,9 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 	writeln(decl);
 	writeln("{");
 	w.indent++;
+	w.pushAggregate(cursor);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
+	w.popAggregate();
 	w.indent--;
 	writeln("}");
 }
