@@ -9,7 +9,7 @@ import lib.clang;
 
 import fourier.walker;
 import fourier.util;
-import fourier.json.volt;
+import fourier.volt;
 
 fn main(args: string[]) i32
 {
