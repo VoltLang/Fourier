@@ -7,10 +7,6 @@ import watt.io.file;
 import watt.io : writefln;
 import json = watt.text.json;
 
-class Value
-{
-}
-
 /**
  * Type of doc object.
  */
@@ -34,7 +30,7 @@ enum Kind
 /**
  * Base class for all doc objects.
  */
-class Base : Value
+class Base
 {
 	kind : Kind;
 	doc : string;
@@ -55,7 +51,7 @@ public:
 class Parent : Named
 {
 public:
-	children : Value[];
+	children : Base[];
 }
 
 /**
@@ -91,8 +87,8 @@ class Variable : Named
  */
 class Function : Named
 {
-	args : Value[];
-	rets : Value[];
+	args : Base[];
+	rets : Base[];
 }
 
 /**
@@ -106,9 +102,9 @@ public:
 	doc : string;
 	type : string;
 	typeFull : string;
-	children : Value[];
-	rets : Value[];
-	args : Value[];
+	children : Base[];
+	rets : Base[];
+	args : Base[];
 
 
 public:
@@ -205,7 +201,7 @@ public:
 	}
 }
 
-fn fromArray(ref arr : Value[], ref v : json.Value, defKind : Kind = Kind.Invalid)
+fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid)
 {
 	foreach (ref e; v.array()) {
 		info : Info;
@@ -246,11 +242,11 @@ fn getKindFromString(str : string) Kind
 	}
 }
 
-fn parse(data : string) Value[]
+fn parse(data : string) Base[]
 {
 	root := json.parse(data);
 
-	mods : Value[];
+	mods : Base[];
 	mods.fromArray(ref root);
 
 	return mods;
