@@ -11,6 +11,7 @@ import lib.clang;
 import fourier.walker;
 import fourier.util;
 import fourier.volt;
+import fourier.compare;
 
 fn main(args: string[]) i32
 {
@@ -26,7 +27,7 @@ fn main(args: string[]) i32
 	}
 	arg := args.length > 1 ? args[1] : "test/test.c";
 	if (jsonName != "") {
-		jsonTest(arg, jsonName, printDebug, moduleName);
+		listDiscrepancies(arg, jsonName);
 	} else {
 		test(arg, printDebug, moduleName);
 	}

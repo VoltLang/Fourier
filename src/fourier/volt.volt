@@ -45,6 +45,14 @@ public:
 	name : string;
 }
 
+fn buildStruct(name: string) Named
+{
+	named := new Named();
+	named.kind = Kind.Struct;
+	named.name = name;
+	return named;
+}
+
 /**
  * Base class for things with children, like Module, Class, Structs.
  */
