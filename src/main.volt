@@ -3,6 +3,7 @@
 module main;
 
 import watt.io;
+import watt.io.file : read;
 import watt.text.getopt;
 
 import lib.clang;
@@ -14,16 +15,21 @@ import fourier.volt;
 fn main(args: string[]) i32
 {
 	printDebug, printUsage : bool;
-	moduleName : string;
+	moduleName, jsonName : string;
 	getopt(ref args, "debug|d", ref printDebug);
 	getopt(ref args, "help|h", ref printUsage);
 	getopt(ref args, "module|m", ref moduleName);
+	getopt(ref args, "json|j", ref jsonName);
 	if (printUsage) {
 		usage();
 		return 0;
 	}
-
-	test(args.length > 1 ? args[1] : "test/test.c", printDebug, moduleName);
+	arg := args.length > 1 ? args[1] : "test/test.c";
+	if (jsonName != "") {
+		jsonTest(arg, jsonName, printDebug, moduleName);
+	} else {
+		test(arg, printDebug, moduleName);
+	}
 	return 0;
 }
 
@@ -33,6 +39,36 @@ fn usage()
 	writeln("\t--debug|-d   print additional information about the source file.");
 	writeln("\t--help|-h    print this message and exit.");
 	writeln("\t--module|-m  override the default module name for the created module.");
+	writeln("\t--json|-j    supply a JSON file to compare the header file against.");
+}
+
+fn jsonTest(header: string, jsonPath: string, printDebug: bool, moduleName: string)
+{
+	json := cast(string)read(jsonPath);  // TODO: Error handling.
+	mods: Base[] = parse(json);
+	indent := 0;
+	fn processModules(modules: Base[])
+	{
+		foreach (mod; modules) {
+			foreach (0 .. indent) {
+				write("  ");
+			}
+			writef("%s ", getStringFromKind(mod.kind));
+			named := cast(Named)mod;
+			if (named !is null) {
+				writef("\"%s\"", named.name);
+			}
+			writeln("");
+			parent := cast(Parent)mod;
+			if (parent is null) {
+				continue;
+			}
+			indent++;
+			processModules(parent.children);
+			indent--;
+		}
+	}
+	processModules(mods);
 }
 
 fn test(file: string, printDebug: bool, moduleName: string)

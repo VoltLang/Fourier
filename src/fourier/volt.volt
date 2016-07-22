@@ -242,6 +242,25 @@ fn getKindFromString(str : string) Kind
 	}
 }
 
+fn getStringFromKind(kind: Kind) string
+{
+	final switch (kind) with (Kind) {
+	case Invalid: return "Invalid";
+	case Arg: return "Arg";
+	case Enum: return "Enum";
+	case Class: return "Class";
+	case Union: return "Union";
+	case Return: return "Return";
+	case Struct: return "Struct";
+	case Module: return "Module";
+	case Member: return "Member";
+	case Function: return "Function";
+	case Variable: return "Variable";
+	case Destructor: return "Destructor";
+	case Constructor: return "Constructor";
+	}
+}
+
 fn parse(data : string) Base[]
 {
 	root := json.parse(data);
