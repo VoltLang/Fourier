@@ -10,17 +10,20 @@ import core.stdc.time : time;
 import lib.clang;
 
 import fourier.visit;
+import fourier.volt : Base;
 
 class Walker
 {
-	indent: i32;
 	tu: CXTranslationUnit;
+	mod: Base[];
 	moduleName: string;
 	random: RandomGenerator;
 	names: string[string];
 	delayedAggregates: CXCursor[string];
 	anonAggregateVarCounters: i32[];
 	aggregateCursors: CXCursor[];
+
+	indent: i32;
 
 	this(tu: CXTranslationUnit, moduleName: string)
 	{
@@ -84,6 +87,11 @@ class Walker
 	fn isGlobal() bool
 	{
 		return anonAggregateVarCounters.length == 0;
+	}
+
+	fn addBase(base: Base)
+	{
+		mod ~= base;
 	}
 }
 

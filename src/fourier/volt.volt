@@ -25,6 +25,7 @@ enum Kind
 	Variable,
 	Destructor,
 	Constructor,
+	Alias,
 }
 
 /**
@@ -45,14 +46,6 @@ public:
 	name : string;
 }
 
-fn buildStruct(name: string) Named
-{
-	named := new Named();
-	named.kind = Kind.Struct;
-	named.name = name;
-	return named;
-}
-
 /**
  * Base class for things with children, like Module, Class, Structs.
  */
@@ -60,6 +53,21 @@ class Parent : Named
 {
 public:
 	children : Base[];
+}
+
+fn buildAggregate(kind: Kind, name: string, children: Base[]) Parent
+{
+	assert(kind == Kind.Struct || kind == Kind.Union);
+	parent := new Parent();
+	parent.kind = kind;
+	parent.name = name;
+	parent.children = children;
+	return parent;
+}
+
+fn buildStruct(name: string) Parent
+{
+	return buildAggregate(Kind.Struct, name, []);
 }
 
 /**
@@ -72,6 +80,14 @@ class Arg : Base
 	typeFull : string;
 }
 
+fn buildArg(name: string, type: string) Arg
+{
+	arg := new Arg();
+	arg.name = name;
+	arg.type = type;
+	return arg;
+}
+
 /**
  * Return from a function.
  */
@@ -79,6 +95,13 @@ class Return : Base
 {
 	type : string;
 	typeFull : string;
+}
+
+fn buildReturn(type: string) Return
+{
+	ret := new Return();
+	ret.type = type;
+	return ret;
 }
 
 /**
@@ -90,6 +113,31 @@ class Variable : Named
 	typeFull : string;
 }
 
+fn buildVariable(name: string, type: string) Variable
+{
+	var := new Variable();
+	var.name = name;
+	var.type = type;
+	return var;
+}
+
+/**
+ * An alias.
+ */
+class Alias : Named
+{
+	type : string;
+	typeFull : string;
+}
+
+fn buildAlias(name: string, type: string) Alias
+{
+	_alias := new Alias();
+	_alias.name = name;
+	_alias.type = type;
+	return _alias;
+}
+
 /**
  * A function or constructor, destructor or method on a aggreegate.
  */
@@ -97,6 +145,15 @@ class Function : Named
 {
 	args : Base[];
 	rets : Base[];
+}
+
+fn buildFunction(name: string, args: Base[], rets: Base[]) Function
+{
+	func := new Function();
+	func.name = name;
+	func.args = args;
+	func.rets = rets;
+	return func;
 }
 
 /**
@@ -216,7 +273,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		info.kind = defKind;
 		info.getFields(ref e);
 		final switch (info.kind) with (Kind) {
-		case Invalid: throw new Exception("kind not specified");
+		case Alias, Invalid: throw new Exception("kind not specified");
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
 		case Class: arr ~= info.toParent(); break;
@@ -246,6 +303,7 @@ fn getKindFromString(str : string) Kind
 	case "struct": return Struct;
 	case "module": return Module;
 	case "member": return Member;
+	case "alias": return Alias;
 	default: throw new Exception("unknown kind '" ~ str ~ "'");
 	}
 }
@@ -266,6 +324,7 @@ fn getStringFromKind(kind: Kind) string
 	case Variable: return "Variable";
 	case Destructor: return "Destructor";
 	case Constructor: return "Constructor";
+	case Alias: return "Alias";
 	}
 }
 

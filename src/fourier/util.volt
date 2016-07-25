@@ -2,8 +2,11 @@
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
 module fourier.util;
 
+import core.exception : Exception;
+
 import watt.io : writef, write;
 import watt.path : baseName, extension;
+import watt.text.format : format;
 
 import lib.clang;
 
@@ -29,99 +32,95 @@ fn getModuleName(path: string) string
 	return baseName(path, extension(path));
 }
 
-fn printType(type: CXType, walker: Walker, id: string = "")
+fn typeString(type: CXType, walker: Walker, id: string = "") string
 {
 	isConst := clang_isConstQualifiedType(type);
-	if (isConst) {
-		write("const(");
+	fn applyConst(s: string) string
+	{
+		if (!isConst) {
+			return s;
+		} else {
+			return "const(" ~ s ~ ")";
+		}
 	}
+
 	switch (type.kind) {
-	case CXType_Invalid: return;
+	case CXType_Invalid: throw new Exception("Invalid Type");
 	case CXType_FunctionProto, CXType_FunctionNoProto:
-		writef("fn (");
+		buf: string;
+		buf ~= "fn (";
 		count := cast(u32)clang_getNumArgTypes(type);
 
 		foreach (i; 0 .. count) {
 			if (i > 0) {
-				writef(", ");
+				buf ~= ", ";
 			}
 
 			arg := clang_getArgType(type, i);
-			arg.printType(walker, id);
+			buf ~= arg.typeString(walker, id);
 		}
-		writef(") ");
+		buf ~= ") ";
 
 		ret := clang_getResultType(type);
-		write("(");
-		ret.printType(walker, id);
-		write(")");
-		break;
+		buf ~= "(";
+		ret.typeString(walker, id);
+		buf ~= ")";
+		return applyConst(buf);
 	case CXType_Typedef:
 		cursor := clang_getTypeDeclaration(type);
 		tdName := getVoltString(clang_getCursorSpelling(cursor));
 		if (isVaList(tdName)) {
 			writef("va_list");
-		} else {
-			writef("%s", tdName);
+			return applyConst("va_list");
 		}
-		break;
+		return applyConst(tdName);
 	case CXType_Pointer:
 		base: CXType;
 		clang_getPointeeType(out base, type);
-		base.printType(walker, id);
-		writef("*");
-		break;
+		return applyConst(format("%s*", base.typeString(walker, id)));
 	case CXType_IncompleteArray:
 		base: CXType;
 		clang_getArrayElementType(out base, type);
-		base.printType(walker, id);
-		writef("*");
-		break;
+		return applyConst(format("%s*", base.typeString(walker, id)));
 	case CXType_ConstantArray:
 		base: CXType;
 		clang_getArrayElementType(out base, type);
 		sz: i64 = clang_getArraySize(type);
-		base.printType(walker, id);
-		writef("[%s]", sz);
-		break;
+		return applyConst(format("%s[%s]", base.typeString(walker, id), sz));
 	case CXType_Record:
 		if (id != "" && walker.hasAnonymousName(id)) {
-			write(walker.getAnonymousName(id));
-			break;
+			return applyConst(walker.getAnonymousName(id));
 		}
 		cursor := clang_getTypeDeclaration(type);
-		write(getVoltString(clang_getCursorSpelling(cursor)));
-		break;
+		return applyConst(getVoltString(clang_getCursorSpelling(cursor)));
 	case CXType_Unexposed:
 		canonicalType: CXType;
 		clang_getCanonicalType(out canonicalType, type);
 		if (!clang_equalTypes(type, canonicalType)) {
-			printType(canonicalType, walker, id);
+			return typeString(canonicalType, walker, id);
 			break;
 		}
 		goto default;
-	case CXType_Void: writef("void"); break;
-	case CXType_Char_S: writef("char"); break;
-	case CXType_Char_U: writef("char"); break;
-	case CXType_UChar: writef("u8"); break;
-	case CXType_SChar: writef("i8"); break;
-	case CXType_UShort: writef("u16"); break;
-	case CXType_Short: writef("i16"); break;
-	case CXType_UInt: writef("u32"); break;
-	case CXType_Int: writef("i32"); break;
-	case CXType_ULong: writef("c_long"); break;
-	case CXType_Long: writef("c_ulong"); break;
-	case CXType_ULongLong: writef("u64"); break;
-	case CXType_LongLong: writef("i64"); break;
-	case CXType_Bool: writef("bool"); break;
-	case CXType_Float: writef("f32"); break;
-	case CXType_Double: writef("f64"); break;
-	case CXType_LongDouble: writef("f64"); break;
-	default: writef("%s", type.kind.toString()); break;
+	case CXType_Void: return applyConst("void");
+	case CXType_Char_S: return applyConst("char");
+	case CXType_Char_U: return applyConst("char");
+	case CXType_UChar: return applyConst("u8");
+	case CXType_SChar: return applyConst("i8");
+	case CXType_UShort: return applyConst("u16");
+	case CXType_Short: return applyConst("i16");
+	case CXType_UInt: return applyConst("u32");
+	case CXType_Int: return applyConst("i32");
+	case CXType_ULong: return applyConst("c_long");
+	case CXType_Long: return applyConst("c_ulong");
+	case CXType_ULongLong: return applyConst("u64");
+	case CXType_LongLong: return applyConst("i64");
+	case CXType_Bool: return applyConst("bool");
+	case CXType_Float: return applyConst("f32");
+	case CXType_Double: return applyConst("f64");
+	case CXType_LongDouble: return applyConst("f64");
+	default: return applyConst(type.kind.toString());
 	}
-	if (isConst) {
-		write(")");
-	}
+	assert(false);  // Never reached.
 }
 
 fn isVaList(decl: string) bool

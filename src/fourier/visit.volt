@@ -9,6 +9,7 @@ import lib.clang;
 
 import fourier.walker;
 import fourier.util;
+import fourier.volt;
 
 fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 {
@@ -25,7 +26,7 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	type := clang_getCursorType(cursor);
 	if (type.kind != CXType_Invalid) {
 		writef("   \"");
-		type.printType(w);
+//		type.printType(w);
 		writefln("\"");
 	} else {
 		writefln("");
@@ -104,56 +105,43 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 		return;
 	}
 
-	w.writeIndent();
-	writef("alias %s = ", tdName);
-	type.printType(w, tdName);
-	writefln(";");
+	w.addBase(buildAlias(tdName, type.typeString(w, tdName)));
 }
 
 fn doFunctionDecl(ref cursor: CXCursor, w: Walker)
 {
 	funcName := getVoltString(clang_getCursorSpelling(cursor));
 
-	w.writeIndent();
-	writef("extern(C) fn %s(", funcName);
+	Base[] args;
+	Base[] rets;
 
 	count := cast(u32)clang_Cursor_getNumArguments(cursor);
 	foreach (i; 0 .. count) {
-		if (i > 0) {
-			writef(", ");
-		}
-
 		arg := clang_Cursor_getArgument(cursor, i);
 		argName := getVoltString(clang_getCursorSpelling(arg));
-
-		if (argName !is null) {
-			writef("%s : ", argName);
-		}
 		type := clang_getCursorType(arg);
-		type.printType(w);
+		args ~= buildArg(argName, type.typeString(w));
 	}
-
-	writef(") ");
 
 	type := clang_getCursorType(cursor);
 	ret := clang_getResultType(type);
-	ret.printType(w);
-	writefln(";");
+	rets ~= buildReturn(ret.typeString(w));
+	w.addBase(buildFunction(funcName, args, rets));
 }
 
 fn doStructDecl(ref cursor: CXCursor, w: Walker)
 {
-	doAggregateDecl(ref cursor, w, "struct");
+	doAggregateDecl(ref cursor, w, Kind.Struct);
 }
 
 fn doUnionDecl(ref cursor: CXCursor, w: Walker)
 {
-	doAggregateDecl(ref cursor, w, "union");
+	doAggregateDecl(ref cursor, w, Kind.Union);
 }
 
 fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 {
-	structType: CXType;
+	/*structType: CXType;
 	clang_getCursorType(out structType, cursor);
 	w.writeIndent();
 	writeln(decl);
@@ -163,17 +151,20 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();
 	w.indent--;
-	writeln("}");
+	writeln("}");*/
+	assert(false);
 }
 
-fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
+fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 {
+
 	structType: CXType;
 	clang_getCursorType(out structType, cursor);
 
 	structName := getVoltString(clang_getCursorSpelling(cursor));
 	isPrivate := false;
-
+	w.addBase(buildAggregate(kind, structName, []));
+/*
 	if (structName == "") {
 		idName := getVoltString(clang_getTypeSpelling(structType));
 		structName = w.getAnonymousName(idName);
@@ -192,7 +183,7 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, keyword: string)
 	w.indent--;
 
 	w.writeIndent();
-	writeln("}");
+	writeln("}");*/
 }
 
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
@@ -208,29 +199,31 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 		isUnion := getVoltString(clang_getTypeSpelling(type)).indexOf("union") >= 0;
 		randomName := "__Anon" ~ w.random.randomString(6);
 		w.delayAggregate((isUnion ? "union " : "struct ") ~ randomName, cursor);
-		w.writeIndent();
-		writefln("%s : %s;", w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
-		         randomName);
+//		w.writeIndent();
+//		writefln("%s : %s;", w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
+//		         randomName);
+		w.addBase(buildVariable(w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
+			randomName));
 		return;
 	}
 
 	vName := getVoltString(clang_getCursorSpelling(cursor));
+	w.addBase(buildVariable(vName, type.typeString(w, vName)));
 
-	w.writeIndent();
-	if (w.isGlobal()) {
-		writef("global ");
-	}
-	writef("%s : ", vName);
-	type.printType(w, vName);
+	//if (w.isGlobal()) {
+	//	writef("global ");
+	//}
+	//writef("%s : ", vName);
+	//type.printType(w, vName);
 
-	clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
+	//clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
 
-	writefln(";");
+	//writefln(";");
 }
 
 fn doIntLiteral(ref cursor: CXCursor, w: Walker)
 {
-	range := clang_getCursorExtent(cursor);
+	/*range := clang_getCursorExtent(cursor);
 	tokens: CXToken*;
 	nTokens: u32;
 	clang_tokenize(w.tu, range, &tokens, &nTokens);
@@ -238,5 +231,5 @@ fn doIntLiteral(ref cursor: CXCursor, w: Walker)
 		str := getVoltString(clang_getTokenSpelling(w.tu, tokens[0]));
 		write(str);
 	}
-	clang_disposeTokens(w.tu, tokens, nTokens);
+	clang_disposeTokens(w.tu, tokens, nTokens);*/
 }
