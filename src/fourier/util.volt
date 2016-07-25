@@ -98,7 +98,6 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		clang_getCanonicalType(out canonicalType, type);
 		if (!clang_equalTypes(type, canonicalType)) {
 			return typeString(canonicalType, walker, id);
-			break;
 		}
 		goto default;
 	case CXType_Void: return applyConst("void");
