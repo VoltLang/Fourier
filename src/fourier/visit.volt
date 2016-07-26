@@ -181,26 +181,6 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();
 	w.addBase(p);
-/*
-	if (structName == "") {
-idName := getVoltString(clang_getTypeSpelling(structType));
-		structName = w.getAnonymousName(idName);
-		isPrivate = true;
-	}
-
-	w.writeIndent();
-	writef("%s%s %s\n", isPrivate ? "private " : "", keyword, structName);
-	w.writeIndent();
-	writef("{\n");
-
-	w.indent++;
-	w.pushAggregate(cursor);
-	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
-	w.popAggregate();
-	w.indent--;
-
-	w.writeIndent();
-	writeln("}");*/
 }
 
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
@@ -216,16 +196,15 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 		isUnion := getVoltString(clang_getTypeSpelling(type)).indexOf("union") >= 0;
 		randomName := "__Anon" ~ w.random.randomString(6);
 		w.delayAggregate((isUnion ? "union " : "struct ") ~ randomName, cursor);
-//		w.writeIndent();
-//		writefln("%s : %s;", w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
-//		         randomName);
 		w.addBase(buildVariable(w.getAnonymousAggregateVarName(isUnion ? "u" : "s"),
 			randomName));
 		return;
 	}
 
 	vName := getVoltString(clang_getCursorSpelling(cursor));
-	w.addBase(buildVariable(vName, type.typeString(w, vName)));
+	v := buildVariable(vName, type.typeString(w, vName));
+	v.isGlobal = w.isGlobal();
+	w.addBase(v);
 
 	//if (w.isGlobal()) {
 	//	writef("global ");

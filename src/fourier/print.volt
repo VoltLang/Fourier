@@ -78,7 +78,7 @@ fn printVariable(base: Base, ref indent: i32)
 	v := cast(Variable)base;
 	assert(v !is null);
 	printIndent(indent);
-	writef("%s : %s", v.name, v.type);
+	writef("%s%s : %s", v.isGlobal ? "global " : "", v.name, v.type);
 }
 
 fn printDestructor(base: Base, ref indent: i32)

@@ -111,6 +111,8 @@ class Variable : Named
 {
 	type : string;
 	typeFull : string;
+
+	isGlobal : bool;
 }
 
 fn buildVariable(name: string, type: string) Variable
