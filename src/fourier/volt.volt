@@ -116,6 +116,7 @@ class Variable : Named
 fn buildVariable(name: string, type: string) Variable
 {
 	var := new Variable();
+	var.kind = Kind.Variable;
 	var.name = name;
 	var.type = type;
 	return var;
