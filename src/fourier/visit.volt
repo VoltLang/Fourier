@@ -3,7 +3,7 @@
 module fourier.visit;
 
 import watt.io;
-import watt.text.string : indexOf;
+import watt.text.string : indexOf, split;
 
 import lib.clang;
 
@@ -141,18 +141,26 @@ fn doUnionDecl(ref cursor: CXCursor, w: Walker)
 
 fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 {
-	/*structType: CXType;
+	structType: CXType;
 	clang_getCursorType(out structType, cursor);
-	w.writeIndent();
-	writeln(decl);
-	writeln("{");
-	w.indent++;
-	w.pushAggregate(cursor);
+
+	kind: Kind;
+	words := decl.split(' ');
+	if (words.length != 2) {
+		assert(false);
+	} else if (words[0] == "struct") {
+		kind = Kind.Struct;
+	} else if (words[0] == "union") {
+		kind = Kind.Union;
+	} else {
+		assert(false);
+	}
+	name := words[1];
+	p : Parent = buildAggregate(kind, name, []);
+	w.pushAggregate(cursor, p);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();
-	w.indent--;
-	writeln("}");*/
-//	assert(false);
+	w.addBase(p);
 }
 
 fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
