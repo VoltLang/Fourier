@@ -11,6 +11,7 @@ import lib.clang;
 
 import fourier.visit;
 import fourier.volt : Base;
+import fourier.print : print;
 
 class Walker
 {
@@ -105,11 +106,8 @@ fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
 		visit(cursor, CXCursor.init, ptr);
 	}
 
-	writefln("module %s;", w.moduleName);
-	// TODO: Dynamically determine when these are needed.
-	writeln("import watt.varargs;");
-	writeln("import core.stdc.config;\n");
-
 	// Print all top level function decls.
 	clang_visitChildren(cursor, visitAndPrint, ptr);
+
+	print(w.mod, moduleName);
 }
