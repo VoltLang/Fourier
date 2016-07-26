@@ -79,6 +79,12 @@ fn printVariable(base: Base, ref indent: i32)
 	assert(v !is null);
 	printIndent(indent);
 	writef("%s%s : %s", v.isGlobal ? "global " : "", v.name, v.type);
+	if (v.assign !is null) {
+		writef(" = ");
+		noIndent: i32;
+		printBase(v.assign, ref noIndent);
+	}
+	writef(";");
 }
 
 fn printDestructor(base: Base, ref indent: i32)

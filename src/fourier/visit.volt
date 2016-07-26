@@ -69,7 +69,6 @@ fn assignVisitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitRe
 	if (cursor.kind != CXCursor_VarDecl) {
 		return CXChildVisit_Continue;
 	}
-	write(" = ");
 	visitAndPrint(cursor, p, ptr);
 	return CXChildVisit_Continue;
 }
@@ -204,17 +203,10 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	vName := getVoltString(clang_getCursorSpelling(cursor));
 	v := buildVariable(vName, type.typeString(w, vName));
 	v.isGlobal = w.isGlobal();
+	w.pushBase(v);
+	clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
+	w.popBase();
 	w.addBase(v);
-
-	//if (w.isGlobal()) {
-	//	writef("global ");
-	//}
-	//writef("%s : ", vName);
-	//type.printType(w, vName);
-
-	//clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
-
-	//writefln(";");
 }
 
 fn doIntLiteral(ref cursor: CXCursor, w: Walker)

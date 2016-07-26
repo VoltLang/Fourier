@@ -111,6 +111,7 @@ class Variable : Named
 {
 	type : string;
 	typeFull : string;
+	assign : Base;
 
 	isGlobal : bool;
 }
