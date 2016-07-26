@@ -152,7 +152,7 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 	w.popAggregate();
 	w.indent--;
 	writeln("}");*/
-	assert(false);
+//	assert(false);
 }
 
 fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
@@ -163,10 +163,19 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 
 	structName := getVoltString(clang_getCursorSpelling(cursor));
 	isPrivate := false;
-	w.addBase(buildAggregate(kind, structName, []));
-/*
 	if (structName == "") {
 		idName := getVoltString(clang_getTypeSpelling(structType));
+		structName = w.getAnonymousName(idName);
+		isPrivate = true;
+	}
+	p : Parent = buildAggregate(kind, structName, []);
+	w.pushAggregate(cursor, p);
+	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
+	w.popAggregate();
+	w.addBase(p);
+/*
+	if (structName == "") {
+idName := getVoltString(clang_getTypeSpelling(structType));
 		structName = w.getAnonymousName(idName);
 		isPrivate = true;
 	}

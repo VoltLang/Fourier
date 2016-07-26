@@ -10,7 +10,7 @@ import core.stdc.time : time;
 import lib.clang;
 
 import fourier.visit;
-import fourier.volt : Base;
+import fourier.volt : Base, Parent;
 import fourier.print : print;
 
 class Walker
@@ -23,6 +23,7 @@ class Walker
 	delayedAggregates: CXCursor[string];
 	anonAggregateVarCounters: i32[];
 	aggregateCursors: CXCursor[];
+	parentStack: Parent[];
 
 	indent: i32;
 
@@ -58,16 +59,18 @@ class Walker
 	/**
 	 * Call before visiting the fields of an aggregate.
 	 */
-	fn pushAggregate(cursor: CXCursor)
+	fn pushAggregate(cursor: CXCursor, parent: Parent)
 	{
 		aggregateCursors ~= cursor;
 		anonAggregateVarCounters ~= 0;
+		parentStack ~= parent;
 	}
 
 	fn popAggregate()
 	{
 		aggregateCursors = aggregateCursors[0 .. $-1];
 		anonAggregateVarCounters = anonAggregateVarCounters[0 .. $-1];
+		parentStack = parentStack[0 .. $-1];
 	}
 
 	/**
@@ -92,7 +95,11 @@ class Walker
 
 	fn addBase(base: Base)
 	{
-		mod ~= base;
+		if (parentStack.length > 0) {
+			parentStack[$-1].children ~= base;
+		} else {
+			mod ~= base;
+		}
 	}
 }
 
