@@ -58,7 +58,16 @@ fn printBase(base: Base, ref indent: i32)
 	case Destructor: printDestructor(base, ref indent); break;
 	case Constructor: printConstructor(base, ref indent); break;
 	case Alias: printAlias(base, ref indent); break;
+	case Exp: printExp(base, ref indent);
 	}
+}
+
+fn printExp(base: Base, ref indent: i32)
+{
+	exp := cast(Exp)base;
+	assert(exp !is null);
+	printIndent(indent);
+	write(exp.value);
 }
 
 fn printArg(base: Base, ref indent: i32)

@@ -26,6 +26,7 @@ enum Kind
 	Destructor,
 	Constructor,
 	Alias,
+	Exp,
 }
 
 /**
@@ -143,7 +144,7 @@ fn buildAlias(name: string, type: string) Alias
 }
 
 /**
- * A function or constructor, destructor or method on a aggreegate.
+ * A function or constructor, destructor or method on a aggregate.
  */
 class Function : Named
 {
@@ -158,6 +159,23 @@ fn buildFunction(name: string, args: Base[], rets: Base[]) Function
 	func.args = args;
 	func.rets = rets;
 	return func;
+}
+
+/**
+ * An expression.
+ */
+class Exp : Base
+{
+public:
+	value : string;
+}
+
+fn buildExp(value: string) Exp
+{
+	exp := new Exp();
+	exp.kind = Kind.Exp;
+	exp.value = value;
+	return exp;
 }
 
 /**
@@ -277,7 +295,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		info.kind = defKind;
 		info.getFields(ref e);
 		final switch (info.kind) with (Kind) {
-		case Alias, Invalid: throw new Exception("kind not specified");
+		case Alias, Invalid, Exp: throw new Exception("kind not specified");
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
 		case Class: arr ~= info.toParent(); break;
@@ -329,6 +347,7 @@ fn getStringFromKind(kind: Kind) string
 	case Destructor: return "Destructor";
 	case Constructor: return "Constructor";
 	case Alias: return "Alias";
+	case Exp: return "Exp";
 	}
 }
 

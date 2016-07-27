@@ -64,15 +64,6 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	return CXChildVisit_Continue;
 }
 
-fn assignVisitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
-{
-	if (cursor.kind != CXCursor_VarDecl) {
-		return CXChildVisit_Continue;
-	}
-	visitAndPrint(cursor, p, ptr);
-	return CXChildVisit_Continue;
-}
-
 fn visitFieldAndPrint(cursor: CXCursor, ptr: void*) CXVisitorResult
 {
 	w := cast(Walker)ptr;
@@ -204,20 +195,20 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	v := buildVariable(vName, type.typeString(w, vName));
 	v.isGlobal = w.isGlobal();
 	w.pushBase(v);
-	clang_visitChildren(cursor, assignVisitAndPrint, cast(void*)w);
+	clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
 	w.popBase();
 	w.addBase(v);
 }
 
 fn doIntLiteral(ref cursor: CXCursor, w: Walker)
 {
-	/*range := clang_getCursorExtent(cursor);
+	range := clang_getCursorExtent(cursor);
 	tokens: CXToken*;
 	nTokens: u32;
 	clang_tokenize(w.tu, range, &tokens, &nTokens);
 	if (nTokens > 0) {
 		str := getVoltString(clang_getTokenSpelling(w.tu, tokens[0]));
-		write(str);
+		w.addBase(buildExp(str));
 	}
-	clang_disposeTokens(w.tu, tokens, nTokens);*/
+	clang_disposeTokens(w.tu, tokens, nTokens);
 }
