@@ -70,7 +70,6 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		cursor := clang_getTypeDeclaration(type);
 		tdName := getVoltString(clang_getCursorSpelling(cursor));
 		if (isVaList(tdName)) {
-			writef("va_list");
 			return applyConst("va_list");
 		}
 		return applyConst(tdName);
