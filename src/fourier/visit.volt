@@ -26,7 +26,7 @@ fn visit(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	type := clang_getCursorType(cursor);
 	if (type.kind != CXType_Invalid) {
 		writef("   \"");
-//		type.printType(w);
+		type.typeString(w);
 		writefln("\"");
 	} else {
 		writefln("");
@@ -58,7 +58,6 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 
 	if (p.kind == CXCursor_TranslationUnit) {
 		foreach (_decl, _cursor; w.delayedAggregates) {
-			writefln("%s %s", _decl, p.kind);
 			doExplicitAggregateDecl(ref _cursor, w, _decl);
 			w.delayedAggregates.remove(_decl);
 		}
