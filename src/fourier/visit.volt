@@ -197,6 +197,9 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	w.pushBase(v);
 	clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
 	w.popBase();
+	if (cursor.kind != CXCursor_VarDecl) {
+		v.assign = null;
+	}
 	w.addBase(v);
 }
 
