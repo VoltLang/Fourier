@@ -58,7 +58,7 @@ fn printBase(base: Base, ref indent: i32)
 	case Destructor: printDestructor(base, ref indent); break;
 	case Constructor: printConstructor(base, ref indent); break;
 	case Alias: printAlias(base, ref indent); break;
-	case Exp: printExp(base, ref indent);
+	case Exp: printExp(base, ref indent); break;
 	}
 }
 
@@ -171,7 +171,7 @@ fn printFunction(base: Base, ref indent: i32)
 	printIndent(indent);
 	writef("fn %s(", func.name);
 	foreach (i, arg; func.args) {
-		printArg(base, ref indent);
+		printArg(arg, ref indent);
 		if (i < func.args.length - 1) {
 			write(", ");
 		}
