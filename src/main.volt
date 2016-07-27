@@ -81,7 +81,7 @@ fn test(file: string, printDebug: bool, moduleName: string)
 		null, 0, CXTranslationUnit_None);
 
 	tu.printDiag(file);
-	tu.walk(printDebug, moduleName != "" ? moduleName : getModuleName(file));
+	tu.walkAndPrint(printDebug, moduleName != "" ? moduleName : getModuleName(file));
 
 	clang_disposeTranslationUnit(tu);
 	clang_disposeIndex(index);

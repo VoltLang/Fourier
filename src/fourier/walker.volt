@@ -120,7 +120,13 @@ class Walker
 	}
 }
 
-fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
+fn walkAndPrint(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
+{
+	w := walk(tu, printDebug, moduleName);
+	print(w.mod, moduleName);
+}
+
+fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string) Walker
 {
 	w := new Walker(tu, moduleName);
 	ptr := cast(void*)w;
@@ -133,5 +139,5 @@ fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string)
 	// Print all top level function decls.
 	clang_visitChildren(cursor, visitAndPrint, ptr);
 
-	print(w.mod, moduleName);
+	return w;
 }

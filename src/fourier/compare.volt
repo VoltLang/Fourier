@@ -12,6 +12,7 @@ import lib.clang;  // Every clang_* function and CX* type.
 
 import fourier.volt : Base, buildStruct, Kind, Named, Parent, parse;
 import fourier.util : getVoltString;
+import fourier.walker;
 
 /**
  * List the important differences between a C header file, and the JSON output
@@ -27,8 +28,10 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 	cContext := loadC(cPath);
 	scope (exit) unloadC(cContext);
 
+	cWalker := walk(cContext.tu, false, "");
+
 	jsonStructs := filterBases(jsonBases, filter.structs);
-	cStructs := filterCStructs(cContext);
+	cStructs := filterBases(cWalker.mod, filter.structs);
 
 	listStructs(jsonPath, jsonStructs);
 	listStructs(cPath, cStructs);
