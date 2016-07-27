@@ -185,7 +185,7 @@ fn printFunction(base: Base, ref indent: i32)
 			write(", ");
 		}
 	}
-	write(")");
+	write(");");
 }
 
 fn printMember(base: Base, ref indent: i32)
