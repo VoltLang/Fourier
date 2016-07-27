@@ -63,7 +63,7 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 
 		ret := clang_getResultType(type);
 		buf ~= "(";
-		ret.typeString(walker, id);
+		buf ~= ret.typeString(walker, id);
 		buf ~= ")";
 		return applyConst(buf);
 	case CXType_Typedef:
