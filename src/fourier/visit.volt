@@ -56,9 +56,12 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	default:
 	}
 
-	foreach (_decl, _cursor; w.delayedAggregates) {
-		doExplicitAggregateDecl(ref _cursor, w, _decl);
-		w.delayedAggregates.remove(_decl);
+	if (p.kind == CXCursor_TranslationUnit) {
+		foreach (_decl, _cursor; w.delayedAggregates) {
+			writefln("%s %s", _decl, p.kind);
+			doExplicitAggregateDecl(ref _cursor, w, _decl);
+			w.delayedAggregates.remove(_decl);
+		}
 	}
 
 	return CXChildVisit_Continue;
