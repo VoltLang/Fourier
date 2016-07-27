@@ -138,6 +138,7 @@ class Alias : Named
 fn buildAlias(name: string, type: string) Alias
 {
 	_alias := new Alias();
+	_alias.kind = Kind.Alias;
 	_alias.name = name;
 	_alias.type = type;
 	return _alias;
@@ -155,6 +156,7 @@ class Function : Named
 fn buildFunction(name: string, args: Base[], rets: Base[]) Function
 {
 	func := new Function();
+	func.kind = Kind.Function;
 	func.name = name;
 	func.args = args;
 	func.rets = rets;
