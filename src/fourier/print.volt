@@ -143,7 +143,9 @@ fn printParent(base: Base, keyword: string, ref indent: i32)
 	assert(p !is null);
 
 	printIndent(indent);
-	writefln("%s %s {", keyword, p.name);
+	writefln("%s %s", keyword, p.name);
+	printIndent(indent);
+	writefln("{");
 	indent++;
 	printBases(p.children, ref indent);
 	indent--;
@@ -169,7 +171,7 @@ fn printFunction(base: Base, ref indent: i32)
 	assert(func !is null);
 
 	printIndent(indent);
-	writef("fn %s(", func.name);
+	writef("extern(C) fn %s(", func.name);
 	foreach (i, arg; func.args) {
 		printArg(arg, ref indent);
 		if (i < func.args.length - 1) {
