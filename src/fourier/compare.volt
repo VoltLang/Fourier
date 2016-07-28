@@ -37,20 +37,35 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 
 fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonBases: Base[]) bool
 {
-	bool pass = true;
+	cNames: Named[string];
+	jsonNames: Named[string];
+
 	foreach (cBase; cBases) {
 		cNamed := cast(Named)cBase;
 		if (cNamed is null) {
 			continue;
 		}
-		jsonNamed := jsonBases.getName(cNamed.name);
+		cNames[cNamed.name] = cNamed;
+	}
+
+	foreach (jsonBase; jsonBases) {
+		jsonNamed := cast(Named)jsonBase;
+		if (jsonNamed is null) {
+			continue;
+		}
+		jsonNames[jsonNamed.name] = jsonNamed;
+	}
+
+	bool pass = true;
+	foreach (name, named; cNames) {
+		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
 			pass = false;
 			writefln("'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
-				cFilename, getStringFromKind(cNamed.kind), cNamed.name, jsonFilename);
+				cFilename, getStringFromKind(named.kind), name, jsonFilename);
 		} else {
 			writefln("'%s' defines %s '%s', as does '%s'. [PASS]",
-				cFilename, getStringFromKind(cNamed.kind), cNamed.name, jsonFilename);
+				cFilename, getStringFromKind(named.kind), name, jsonFilename);
 		}
 	}
 	return pass;
