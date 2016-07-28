@@ -30,8 +30,8 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 
 	cWalker := walk(cContext.tu, false, "");
 
-	jsonStructs := filterBases(jsonBases, filter.structs);
-	cStructs := filterBases(cWalker.mod, filter.structs);
+	jsonStructs := filterBases(jsonBases, filter.publicStructs);
+	cStructs := filterBases(cWalker.mod, filter.publicStructs);
 
 	listStructs(jsonPath, jsonStructs);
 	listStructs(cPath, cStructs);
@@ -163,9 +163,10 @@ fn filterBases(bases: Base[], dg: filterdg) Base[]
 alias filterdg = bool delegate(Base);
 private struct Filter
 {
-	fn structs(base: Base) bool
+	fn publicStructs(base: Base) bool
 	{
-		return base.kind == Kind.Struct;
+		p := cast(Parent)base;
+		return base.kind == Kind.Struct && p !is null && !p.isAnonymous;
 	}
 }
 private global Filter filter;
