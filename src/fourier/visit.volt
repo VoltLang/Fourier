@@ -177,6 +177,23 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 	w.addBase(p);
 }
 
+/// If a given cursor has children, will those children be an assign?
+fn isAssign(ref cursor: CXCursor, w: Walker) bool
+{
+	tokens: CXToken*;
+	tokenCount: u32;
+	range: CXSourceRange = clang_getCursorExtent(cursor);
+	clang_tokenize(w.tu, range, &tokens, &tokenCount);
+	scope (exit) clang_disposeTokens(w.tu, tokens, tokenCount);
+	foreach (i; 0 .. tokenCount) {
+		str := getVoltString(clang_getTokenSpelling(w.tu, tokens[i]));
+		if (str == "=") {
+			return true;
+		}
+	}
+	return false;
+}
+
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
 {
 	type: CXType;
@@ -198,9 +215,11 @@ fn doVarDecl(ref cursor: CXCursor, w: Walker)
 	vName := getVoltString(clang_getCursorSpelling(cursor));
 	v := buildVariable(vName, type.typeString(w, vName));
 	v.isGlobal = w.isGlobal();
-	w.pushBase(v);
-	clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
-	w.popBase();
+	if (isAssign(ref cursor, w)) {
+		w.pushBase(v);
+		clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
+		w.popBase();
+	}
 	if (cursor.kind != CXCursor_VarDecl) {
 		v.assign = null;
 	}
