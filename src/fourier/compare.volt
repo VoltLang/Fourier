@@ -70,8 +70,6 @@ struct ClangContext
 {
 	index: CXIndex;
 	tu: CXTranslationUnit;
-
-	bases: Base[];
 }
 
 /**
@@ -99,40 +97,6 @@ fn unloadC(context: ClangContext)
 {
 	clang_disposeTranslationUnit(context.tu);
 	clang_disposeIndex(context.index);
-}
-
-/**
- * Return all structs from the C file.
- * Returns: An array of Base objects with the structs from the given context.
- */
-fn filterCStructs(context: ClangContext) Base[]
-{
-	cursor := clang_getTranslationUnitCursor(context.tu);
-	clang_visitChildren(cursor, structVisitor, cast(void*)&context);
-	return context.bases;
-}
-
-/**
- * Visitor to translate the libclang data into an array of Bases.
- */
-fn structVisitor(cursor: CXCursor, parent: CXCursor, ptr: void*) CXChildVisitResult
-{
-	context := cast(ClangContext*)ptr;
-	assert(context !is null);
-	if (cursor.kind == CXCursor_StructDecl) {
-		context.bases ~= buildStruct(getStructName(cursor));
-	}
-	return CXChildVisit_Continue;
-}
-
-/**
- * Get the name of a clang struct.
- */
-fn getStructName(cursor: CXCursor) string
-{
-	type: CXType;
-	clang_getCursorType(out type, cursor);
-	return getVoltString(clang_getCursorSpelling(cursor));
 }
 
 /**
