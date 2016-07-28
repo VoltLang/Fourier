@@ -5,6 +5,7 @@ module fourier.volt;
 import core.exception;
 import watt.io.file;
 import watt.io : writefln;
+import watt.text.string : indexOf;
 import json = watt.text.json;
 
 /**
@@ -231,6 +232,7 @@ public:
 	fn copyToParent(b : Parent)
 	{
 		copyToNamed(b);
+		b.isAnonymous = b.name.indexOf("__Anon") >= 0;
 		b.children = children;
 	}
 

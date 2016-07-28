@@ -52,7 +52,7 @@ class Walker
 		if (p := id in names) {
 			return *p;
 		}
-		names[id] = format("__%sAnon%s", id, random.randomString(6));
+		names[id] = format("__Anon%s%s", id, random.randomString(6));
 		return names[id];
 	}
 

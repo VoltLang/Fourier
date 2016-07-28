@@ -149,6 +149,7 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 	}
 	name := words[1];
 	p : Parent = buildAggregate(kind, name, []);
+	p.isAnonymous = name.indexOf("__Anon") >= 0;
 	w.pushAggregate(cursor, p);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();
