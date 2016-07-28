@@ -103,6 +103,7 @@ class Return : Base
 fn buildReturn(type: string) Return
 {
 	ret := new Return();
+	ret.kind = Kind.Return;
 	ret.type = type;
 	return ret;
 }
@@ -206,7 +207,7 @@ public:
 			switch (k) {
 			case "doc": this.doc = v.str(); break;
 			case "args": args.fromArray(ref v, Kind.Arg); break;
-			case "rets": rets.fromArray(ref v, Kind.Arg); break;
+			case "rets": rets.fromArray(ref v, Kind.Return); break;
 			case "name": this.name = v.str(); break;
 			case "type": this.type = v.str(); break;
 			case "kind": this.kind = getKindFromString(v.str()); break;

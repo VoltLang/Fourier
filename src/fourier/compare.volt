@@ -63,12 +63,65 @@ fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonB
 			pass = false;
 			writefln("'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
 				cFilename, getStringFromKind(named.kind), name, jsonFilename);
+			continue;
 		} else {
 			writefln("'%s' defines %s '%s', as does '%s'. [PASS]",
 				cFilename, getStringFromKind(named.kind), name, jsonFilename);
 		}
+		cFunc := cast(Function)named;
+		jsonFunc := cast(Function)*jsonNamed;
+		if (cFunc !is null && jsonFunc !is null) {
+			pass = pass && funcComparison(cFunc, jsonFunc);
+		}
 	}
 	return pass;
+}
+
+fn funcComparison(cFunction: Function, jsonFunction: Function) bool
+{
+	fn fail(reason: string) bool
+	{
+		writefln("\tFunction match failure. (%s) [FAIL]", reason);
+		return false;
+	}
+	if (cFunction.args.length != jsonFunction.args.length ||
+	    cFunction.rets.length != jsonFunction.rets.length) {
+		return fail("number of args or return types don't match");
+	}
+	foreach (i; 0 .. cFunction.args.length) {
+		cArg := cast(Arg)cFunction.args[i];
+		jArg := cast(Arg)jsonFunction.args[i];
+		if (cArg is null || jArg is null) {
+			return fail("not a valid argument");
+		}
+		if (!argsEqual(cArg, jArg)) {
+			return fail("argument mismatch");
+		}
+	}
+	foreach (i; 0 .. cFunction.rets.length) {
+		cRet := cast(Return)cFunction.rets[i];
+		jRet := cast(Return)jsonFunction.rets[i];
+		if (cRet is null || jRet is null) {
+			return fail("not a valid return");
+		}
+		if (!retsEqual(cRet, jRet)) {
+			return fail("return mismatch");
+		}
+	}
+	writefln("\tFunction types match! [PASS]");
+	return true;
+}
+
+/// Tests two Args for equality.
+fn argsEqual(a: Arg, b: Arg) bool
+{
+	return a.type == b.type;
+}
+
+/// Tests two Returns for equality.
+fn retsEqual(a: Return, b: Return) bool
+{
+	return a.type == b.type;
 }
 
 /**
