@@ -143,7 +143,7 @@ fn printParent(base: Base, keyword: string, ref indent: i32)
 	assert(p !is null);
 
 	printIndent(indent);
-	writefln("%s %s", keyword, p.name);
+	writefln("%s%s %s", p.isAnonymous ? "private " : "", keyword, p.name);
 	printIndent(indent);
 	writefln("{");
 	indent++;

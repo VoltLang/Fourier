@@ -162,13 +162,14 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 	clang_getCursorType(out structType, cursor);
 
 	structName := getVoltString(clang_getCursorSpelling(cursor));
-	isPrivate := false;
+	isAnonymous := false;
 	if (structName == "") {
 		idName := getVoltString(clang_getTypeSpelling(structType));
 		structName = w.getAnonymousName(idName);
-		isPrivate = true;
+		isAnonymous = true;
 	}
 	p : Parent = buildAggregate(kind, structName, []);
+	p.isAnonymous = isAnonymous;
 	w.pushAggregate(cursor, p);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
 	w.popAggregate();

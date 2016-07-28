@@ -54,6 +54,7 @@ class Parent : Named
 {
 public:
 	children : Base[];
+	isAnonymous : bool;  // If this was generated from C, does this have a generated name?
 }
 
 fn buildAggregate(kind: Kind, name: string, children: Base[]) Parent
