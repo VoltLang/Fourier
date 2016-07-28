@@ -10,7 +10,7 @@ import watt.io.file : read;
 
 import lib.clang;  // Every clang_* function and CX* type.
 
-import fourier.volt : Base, buildStruct, Kind, Named, Parent, parse;
+import fourier.volt : Base, buildStruct, Kind, Named, Parent, parse, Function;
 import fourier.util : getVoltString;
 import fourier.walker;
 
@@ -30,11 +30,47 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 
 	cWalker := walk(cContext.tu, false, "");
 
-	jsonStructs := filterBases(jsonBases, filter.publicStructs);
-	cStructs := filterBases(cWalker.mod, filter.publicStructs);
+	cNames := filterBases(cWalker.mod, filter.functions);
+	jsonNames := filterBases(jsonBases, filter.functions);
+	nameComparison(cPath, cNames, jsonPath, jsonNames);
+}
 
-	listStructs(jsonPath, jsonStructs);
-	listStructs(cPath, cStructs);
+fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonBases: Base[]) bool
+{
+	bool pass = true;
+	foreach (cBase; cBases) {
+		cNamed := cast(Named)cBase;
+		if (cNamed is null) {
+			continue;
+		}
+		jsonNamed := jsonBases.getName(cNamed.name);
+		if (jsonNamed is null) {
+			pass = false;
+			writefln("'%s' defines name '%s' that is undefined by '%s'. [FAIL]",
+				cFilename, cNamed.name, jsonFilename);
+		} else {
+			writefln("'%s' defines name '%s', as does '%s'. [PASS]",
+				cFilename, cNamed.name, jsonFilename);
+		}
+	}
+	return pass;
+}
+
+/**
+ * Returns a Named from bases that has the name name, or null.
+ */
+fn getName(bases: Base[], name: string) Named
+{
+	foreach (base; bases) {
+		named := cast(Named)base;
+		if (named is null) {
+			continue;
+		}
+		if (named.name == name) {
+			return named;
+		}
+	}
+	return null;
 }
 
 /**
@@ -131,6 +167,18 @@ private struct Filter
 	{
 		p := cast(Parent)base;
 		return base.kind == Kind.Struct && p !is null && !p.isAnonymous;
+	}
+
+	fn functions(base: Base) bool
+	{
+		f := cast(Function)base;
+		return f !is null;
+	}
+
+	fn named(base: Base) bool
+	{
+		n := cast(Named)base;
+		return n !is null;
 	}
 }
 private global Filter filter;
