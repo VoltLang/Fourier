@@ -10,7 +10,7 @@ import watt.io.file : read;
 
 import lib.clang;  // Every clang_* function and CX* type.
 
-import fourier.volt : Base, buildStruct, Kind, Named, Parent, parse, Function;
+import fourier.volt;
 import fourier.util : getVoltString;
 import fourier.walker;
 
@@ -46,11 +46,11 @@ fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonB
 		jsonNamed := jsonBases.getName(cNamed.name);
 		if (jsonNamed is null) {
 			pass = false;
-			writefln("'%s' defines name '%s' that is undefined by '%s'. [FAIL]",
-				cFilename, cNamed.name, jsonFilename);
+			writefln("'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
+				cFilename, getStringFromKind(cNamed.kind), cNamed.name, jsonFilename);
 		} else {
-			writefln("'%s' defines name '%s', as does '%s'. [PASS]",
-				cFilename, cNamed.name, jsonFilename);
+			writefln("'%s' defines %s '%s', as does '%s'. [PASS]",
+				cFilename, getStringFromKind(cNamed.kind), cNamed.name, jsonFilename);
 		}
 	}
 	return pass;
