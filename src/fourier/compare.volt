@@ -68,13 +68,31 @@ fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonB
 			writefln("'%s' defines %s '%s', as does '%s'. [PASS]",
 				cFilename, getStringFromKind(named.kind), name, jsonFilename);
 		}
-		cFunc := cast(Function)named;
-		jsonFunc := cast(Function)*jsonNamed;
-		if (cFunc !is null && jsonFunc !is null) {
-			pass = pass && funcComparison(cFunc, jsonFunc);
-		}
+		pass = pass && compare(named, *jsonNamed);
 	}
 	return pass;
+}
+
+fn compare(cBase: Base, jBase: Base) bool
+{
+	cFunc := cast(Function)cBase;
+	jsonFunc := cast(Function)jBase;
+	if (cFunc !is null && jsonFunc !is null) {
+		return funcComparison(cFunc, jsonFunc);
+	}
+
+	cParent := cast(Parent)cBase;
+	jParent := cast(Parent)jBase;
+	if (cParent !is null && jParent !is null) {
+		return parentComparison(cParent, jParent);
+	}
+
+	return true;
+}
+
+fn parentComparison(cParent: Parent, jParent: Parent) bool
+{
+	return true;
 }
 
 fn funcComparison(cFunction: Function, jsonFunction: Function) bool
