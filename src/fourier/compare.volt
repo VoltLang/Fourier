@@ -32,11 +32,12 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 
 	cNames := filterBases(cWalker.mod, filter.everything);
 	jsonNames := filterBases(jsonBases, filter.everything);
-	nameComparison(cPath, cNames, jsonPath, jsonNames);
+	string indent = "";
+	nameComparison(cPath, cNames, jsonPath, jsonNames, indent);
 }
 
 fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[],
-	indent: string = "") bool
+	indent: string) bool
 {
 	cNames: Named[string];
 	jsonNames: Named[string];
@@ -69,12 +70,14 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 			writefln("%s'%s' defines %s '%s', as does '%s'. [PASS]",
 				indent, jName, getStringFromKind(named.kind), name, jName);
 		}
-		pass = pass && compare(named, *jsonNamed);
+		indent ~= "  ";
+		pass = pass && compare(named, *jsonNamed, indent);
+		indent = indent[0 .. $-2];
 	}
 	return pass;
 }
 
-fn compare(cBase: Base, jBase: Base) bool
+fn compare(cBase: Base, jBase: Base, indent: string) bool
 {
 	cFunc := cast(Function)cBase;
 	jsonFunc := cast(Function)jBase;
@@ -85,34 +88,35 @@ fn compare(cBase: Base, jBase: Base) bool
 	cParent := cast(Parent)cBase;
 	jParent := cast(Parent)jBase;
 	if (cParent !is null && jParent !is null) {
-		return parentComparison(cParent, jParent);
+		return parentComparison(cParent, jParent, indent);
 	}
 
 	cVar := cast(Variable)cBase;
 	jVar := cast(Variable)jBase;
 	if (cVar !is null && jVar !is null) {
-		return varComparison(cVar, jVar);
+		return varComparison(cVar, jVar, indent);
 	}
 
 	return false;
 }
 
-fn varComparison(cVar: Variable, jVar: Variable) bool
+fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
 {
 	assert(cVar.name == jVar.name);
 	if (cVar.type == jVar.type) {
 		return true;
 	} else {
-		writefln("Variable '%s' type mismatch [FAILURE]", cVar.name);
+		writefln("%sVariable '%s' type mismatch [FAILURE]", indent, cVar.name);
 		return false;
 	}
 }
 
-fn parentComparison(cParent: Parent, jParent: Parent) bool
+fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 {
 	c := filterBases(cParent.children, filter.everything);
 	j := filterBases(jParent.children, filter.everything);
-	return nameComparison(cParent.name, c, jParent.name, j, "  ");
+	result := nameComparison(cParent.name, c, jParent.name, j, indent);
+	return result;
 }
 
 fn funcComparison(cFunction: Function, jsonFunction: Function) bool
