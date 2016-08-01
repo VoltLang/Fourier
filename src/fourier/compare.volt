@@ -35,7 +35,8 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 	nameComparison(cPath, cNames, jsonPath, jsonNames);
 }
 
-fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonBases: Base[]) bool
+fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonBases: Base[],
+	indent: string = "") bool
 {
 	cNames: Named[string];
 	jsonNames: Named[string];
@@ -61,12 +62,12 @@ fn nameComparison(cFilename: string, cBases: Base[], jsonFilename: string, jsonB
 		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
 			pass = false;
-			writefln("'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
-				cFilename, getStringFromKind(named.kind), name, jsonFilename);
+			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
+				indent, cFilename, getStringFromKind(named.kind), name, jsonFilename);
 			continue;
 		} else {
-			writefln("'%s' defines %s '%s', as does '%s'. [PASS]",
-				cFilename, getStringFromKind(named.kind), name, jsonFilename);
+			writefln("%s'%s' defines %s '%s', as does '%s'. [PASS]",
+				indent, cFilename, getStringFromKind(named.kind), name, jsonFilename);
 		}
 		pass = pass && compare(named, *jsonNamed);
 	}
@@ -92,7 +93,9 @@ fn compare(cBase: Base, jBase: Base) bool
 
 fn parentComparison(cParent: Parent, jParent: Parent) bool
 {
-	return true;
+	c := filterBases(cParent.children, filter.everything);
+	j := filterBases(jParent.children, filter.everything);
+	return nameComparison(cParent.name, c, jParent.name, j, "  ");
 }
 
 fn funcComparison(cFunction: Function, jsonFunction: Function) bool
