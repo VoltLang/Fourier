@@ -30,8 +30,8 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 
 	cWalker := walk(cContext.tu, false, "");
 
-	cNames := filterBases(cWalker.mod, filter.functions);
-	jsonNames := filterBases(jsonBases, filter.functions);
+	cNames := filterBases(cWalker.mod, filter.everything);
+	jsonNames := filterBases(jsonBases, filter.everything);
 	nameComparison(cPath, cNames, jsonPath, jsonNames);
 }
 
@@ -239,7 +239,7 @@ fn filterBases(bases: Base[], dg: filterdg) Base[]
 			ret ~= base;
 		}
 		parent := cast(Parent)base;
-		if (parent !is null) {
+		if (parent !is null && parent.kind == Kind.Module) {
 			ret ~= filterBases(parent.children, dg);
 		}
 	}
@@ -265,6 +265,11 @@ private struct Filter
 	{
 		n := cast(Named)base;
 		return n !is null;
+	}
+
+	fn everything(base: Base) bool
+	{
+		return true;
 	}
 }
 private global Filter filter;
