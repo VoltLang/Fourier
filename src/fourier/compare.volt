@@ -5,7 +5,7 @@
  */
 module fourier.compare;
 
-import watt.io : writefln;
+import watt.io : writefln, writeln;
 import watt.io.file : read;
 
 import lib.clang;  // Every clang_* function and CX* type.
@@ -88,7 +88,24 @@ fn compare(cBase: Base, jBase: Base) bool
 		return parentComparison(cParent, jParent);
 	}
 
-	return true;
+	cVar := cast(Variable)cBase;
+	jVar := cast(Variable)jBase;
+	if (cVar !is null && jVar !is null) {
+		return varComparison(cVar, jVar);
+	}
+
+	return false;
+}
+
+fn varComparison(cVar: Variable, jVar: Variable) bool
+{
+	assert(cVar.name == jVar.name);
+	if (cVar.type == jVar.type) {
+		return true;
+	} else {
+		writefln("Variable '%s' type mismatch [FAILURE]", cVar.name);
+		return false;
+	}
 }
 
 fn parentComparison(cParent: Parent, jParent: Parent) bool
