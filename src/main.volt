@@ -27,7 +27,7 @@ fn main(args: string[]) i32
 	}
 	arg := args.length > 1 ? args[1] : "test/test.c";
 	if (jsonName != "") {
-		listDiscrepancies(arg, jsonName);
+		return listDiscrepancies(arg, jsonName) ? 0 : 1;
 	} else {
 		test(arg, printDebug, moduleName);
 	}

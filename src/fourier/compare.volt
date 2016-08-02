@@ -21,8 +21,10 @@ import fourier.walker;
  * Params:
  *   cPath: The filename of the C file to check.
  *   jsonPath: The filename of the JSON file to check.
+ *
+ * Returns: true if all tests passed.
  */
-fn listDiscrepancies(cPath: string, jsonPath: string)
+fn listDiscrepancies(cPath: string, jsonPath: string) bool
 {
 	jsonBases := loadJson(jsonPath);
 	cContext := loadC(cPath);
@@ -33,7 +35,7 @@ fn listDiscrepancies(cPath: string, jsonPath: string)
 	cNames := filterBases(cWalker.mod, filter.everything);
 	jsonNames := filterBases(jsonBases, filter.everything);
 	string indent = "";
-	nameComparison(cPath, cNames, jsonPath, jsonNames, indent);
+	return nameComparison(cPath, cNames, jsonPath, jsonNames, indent);
 }
 
 fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[],
