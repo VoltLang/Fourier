@@ -2,9 +2,13 @@
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
 module main;
 
+import watt.conv : toStringz;
 import watt.io;
 import watt.io.file : read;
 import watt.text.getopt;
+import watt.process;
+import watt.path : temporaryFilename;
+import core.stdc.stdio : unlink;
 
 import lib.clang;
 
@@ -16,11 +20,12 @@ import fourier.compare;
 fn main(args: string[]) i32
 {
 	printDebug, printUsage : bool;
-	moduleName, jsonName : string;
+	moduleName, jsonName, voltSource : string;
 	getopt(ref args, "debug|d", ref printDebug);
 	getopt(ref args, "help|h", ref printUsage);
 	getopt(ref args, "module|m", ref moduleName);
 	getopt(ref args, "json|j", ref jsonName);
+	getopt(ref args, "volt|v", ref voltSource);
 	if (printUsage) {
 		usage();
 		return 0;
@@ -28,6 +33,8 @@ fn main(args: string[]) i32
 	arg := args.length > 1 ? args[1] : "test/test.c";
 	if (jsonName != "") {
 		return listDiscrepancies(arg, jsonName) ? 0 : 1;
+	} else if (voltSource != "") {
+		return testVoltGenerationAgainstCFile(arg, voltSource) ? 0 : 1;
 	} else {
 		test(arg, printDebug, moduleName);
 	}
@@ -41,35 +48,17 @@ fn usage()
 	writeln("\t--help|-h    print this message and exit.");
 	writeln("\t--module|-m  override the default module name for the created module.");
 	writeln("\t--json|-j    supply a JSON file to compare the header file against.");
+	writeln("\t--volt|-v    invoke $VOLT to create a json file from, and compare against the header file.");
 }
 
-fn jsonTest(header: string, jsonPath: string, printDebug: bool, moduleName: string)
+fn testVoltGenerationAgainstCFile(cSource: string, voltSource: string) bool
 {
-	json := cast(string)read(jsonPath);  // TODO: Error handling.
-	mods: Base[] = parse(json);
-	indent := 0;
-	fn processModules(modules: Base[])
-	{
-		foreach (mod; modules) {
-			foreach (0 .. indent) {
-				write("  ");
-			}
-			writef("%s ", getStringFromKind(mod.kind));
-			named := cast(Named)mod;
-			if (named !is null) {
-				writef("\"%s\"", named.name);
-			}
-			writeln("");
-			parent := cast(Parent)mod;
-			if (parent is null) {
-				continue;
-			}
-			indent++;
-			processModules(parent.children);
-			indent--;
-		}
-	}
-	processModules(mods);
+	jsonFile := temporaryFilename(".json");
+	pid := spawnProcess(getEnv("VOLT"), ["-c", "-jo", jsonFile, voltSource]);
+	pid.wait();
+	ret := listDiscrepancies(cSource, jsonFile);
+	unlink(toStringz(jsonFile));
+	return ret;
 }
 
 fn test(file: string, printDebug: bool, moduleName: string)

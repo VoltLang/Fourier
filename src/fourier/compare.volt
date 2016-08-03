@@ -70,7 +70,7 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 			continue;
 		} else {
 			writefln("%s'%s' defines %s '%s', as does '%s'. [PASS]",
-				indent, jName, getStringFromKind(named.kind), name, jName);
+				indent, cName, getStringFromKind(named.kind), name, jName);
 		}
 		indent ~= "  ";
 		pass = pass && compare(named, *jsonNamed, indent);
