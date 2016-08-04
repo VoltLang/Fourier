@@ -30,6 +30,25 @@ enum Kind
 	Exp,
 }
 
+enum Linkage
+{
+	Volt,
+	C,
+	Windows,
+	CPlusPlus,
+	Other,
+}
+
+fn stringToLinkage(s: string) Linkage
+{
+	switch (s) {
+	case "c": return Linkage.C;
+	case "c++": return Linkage.CPlusPlus;
+	case "windows": return Linkage.Windows;
+	default: return Linkage.Other;
+	}
+}
+
 /**
  * Base class for all doc objects.
  */
@@ -154,6 +173,7 @@ class Function : Named
 {
 	args : Base[];
 	rets : Base[];
+	linkage : Linkage;
 }
 
 fn buildFunction(name: string, args: Base[], rets: Base[]) Function
@@ -197,11 +217,13 @@ public:
 	children : Base[];
 	rets : Base[];
 	args : Base[];
+	linkage : Linkage;
 
 
 public:
 	fn getFields(ref e : json.Value)
 	{
+		linkage = Linkage.Volt;
 		foreach (k; e.keys()) {
 			v := e.lookupObjectKey(k);
 			switch (k) {
@@ -213,6 +235,7 @@ public:
 			case "kind": this.kind = getKindFromString(v.str()); break;
 			case "typeFull": this.typeFull = v.str(); break;
 			case "children": children.fromArray(ref v); break;
+			case "linkage": this.linkage = stringToLinkage(v.str()); break;
 			default: writefln("unknown key '" ~ k ~ "'");
 			}
 		}
@@ -285,6 +308,7 @@ public:
 		copyToNamed(b);
 		b.args = args;
 		b.rets = rets;
+		b.linkage = linkage;
 		switch (kind) with (Kind) {
 		case Destructor: b.name = "~this"; break;
 		case Constructor: b.name = "this"; break;

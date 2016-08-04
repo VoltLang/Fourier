@@ -132,6 +132,9 @@ fn funcComparison(cFunction: Function, jsonFunction: Function) bool
 	    cFunction.rets.length != jsonFunction.rets.length) {
 		return fail("number of args or return types don't match");
 	}
+	if (jsonFunction.linkage != Linkage.C) {
+		return fail("non C linkage");
+	}
 	foreach (i; 0 .. cFunction.args.length) {
 		cArg := cast(Arg)cFunction.args[i];
 		jArg := cast(Arg)jsonFunction.args[i];
