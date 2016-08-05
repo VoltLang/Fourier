@@ -302,6 +302,15 @@ public:
 		return b;
 	}
 
+	fn toAlias() Alias
+	{
+		b := new Alias();
+		copyToNamed(b);
+		b.kind = Kind.Alias;
+		b.type = type;
+		return b;
+	}
+
 	fn toFunction() Function
 	{
 		b := new Function();
@@ -325,7 +334,8 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		info.kind = defKind;
 		info.getFields(ref e);
 		final switch (info.kind) with (Kind) {
-		case Alias, Invalid, Exp: throw new Exception("kind not specified");
+		case Invalid, Exp: throw new Exception("kind not specified");
+		case Alias: arr ~= info.toAlias(); break;
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
 		case Class: arr ~= info.toParent(); break;

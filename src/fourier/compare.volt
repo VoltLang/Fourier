@@ -99,6 +99,12 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 		return varComparison(cVar, jVar, indent);
 	}
 
+	cAlias := cast(Alias)cBase;
+	jAlias := cast(Alias)jBase;
+	if (cAlias !is null && jAlias !is null) {
+		assert(false);
+	}
+
 	return false;
 }
 
