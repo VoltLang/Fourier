@@ -84,7 +84,7 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 	cFunc := cast(Function)cBase;
 	jsonFunc := cast(Function)jBase;
 	if (cFunc !is null && jsonFunc !is null) {
-		return funcComparison(cFunc, jsonFunc);
+		return funcComparison(cFunc, jsonFunc, indent);
 	}
 
 	cParent := cast(Parent)cBase;
@@ -108,10 +108,15 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 	return false;
 }
 
+fn typesEqual(a: string, b: string, indent: string) bool
+{
+	return a == b;
+}
+
 fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
 {
 	assert(cAlias.name == jAlias.name);
-	if (cAlias.type == jAlias.type) {
+	if (typesEqual(cAlias.type, jAlias.type, indent)) {
 		return true;
 	} else {
 		writefln("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
@@ -122,7 +127,7 @@ fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
 fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
 {
 	assert(cVar.name == jVar.name);
-	if (cVar.type == jVar.type) {
+	if (typesEqual(cVar.type, jVar.type, indent)) {
 		return true;
 	} else {
 		writefln("%sVariable '%s' type mismatch [FAILURE]", indent, cVar.name);
@@ -138,11 +143,11 @@ fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 	return result;
 }
 
-fn funcComparison(cFunction: Function, jsonFunction: Function) bool
+fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) bool
 {
 	fn fail(reason: string) bool
 	{
-		writefln("\tFunction match failure. (%s) [FAIL]", reason);
+		writefln("%sFunction match failure. (%s) [FAIL]", indent, reason);
 		return false;
 	}
 	if (cFunction.args.length != jsonFunction.args.length ||
@@ -158,7 +163,7 @@ fn funcComparison(cFunction: Function, jsonFunction: Function) bool
 		if (cArg is null || jArg is null) {
 			return fail("not a valid argument");
 		}
-		if (!argsEqual(cArg, jArg)) {
+		if (!argsEqual(cArg, jArg, indent)) {
 			return fail("argument mismatch");
 		}
 	}
@@ -168,24 +173,24 @@ fn funcComparison(cFunction: Function, jsonFunction: Function) bool
 		if (cRet is null || jRet is null) {
 			return fail("not a valid return");
 		}
-		if (!retsEqual(cRet, jRet)) {
+		if (!retsEqual(cRet, jRet, indent)) {
 			return fail("return mismatch");
 		}
 	}
-	writefln("\tFunction types match! [PASS]");
+	writefln("%sFunction types match! [PASS]", indent);
 	return true;
 }
 
 /// Tests two Args for equality.
-fn argsEqual(a: Arg, b: Arg) bool
+fn argsEqual(a: Arg, b: Arg, indent: string) bool
 {
-	return a.type == b.type;
+	return typesEqual(a.type, b.type, indent);
 }
 
 /// Tests two Returns for equality.
-fn retsEqual(a: Return, b: Return) bool
+fn retsEqual(a: Return, b: Return, indent: string) bool
 {
-	return a.type == b.type;
+	return typesEqual(a.type, b.type, indent);
 }
 
 /**
