@@ -102,10 +102,21 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 	cAlias := cast(Alias)cBase;
 	jAlias := cast(Alias)jBase;
 	if (cAlias !is null && jAlias !is null) {
-		assert(false);
+		return aliasComparison(cAlias, jAlias, indent);
 	}
 
 	return false;
+}
+
+fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
+{
+	assert(cAlias.name == jAlias.name);
+	if (cAlias.type == jAlias.type) {
+		return true;
+	} else {
+		writefln("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
+		return false;
+	}
 }
 
 fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
