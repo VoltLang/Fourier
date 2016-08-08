@@ -64,6 +64,10 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 	foreach (name, named; cNames) {
 		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
+			asParent := cast(Parent)named;
+			if (asParent !is null && asParent.isAnonymous) {
+				continue;
+			}
 			pass = false;
 			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
 				indent, cName, getStringFromKind(named.kind), name, jName);
@@ -117,6 +121,7 @@ fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
 		return true;
 	} else {
 		writefln("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
+		writefln("%s %s", cAlias.type, jAlias.type);
 		return false;
 	}
 }
