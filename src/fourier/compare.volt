@@ -68,9 +68,6 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
 				indent, cName, getStringFromKind(named.kind), name, jName);
 			continue;
-		} else {
-			writefln("%s'%s' defines %s '%s', as does '%s'. [PASS]",
-				indent, cName, getStringFromKind(named.kind), name, jName);
 		}
 		indent ~= "  ";
 		pass = pass && compare(named, *jsonNamed, indent);
@@ -177,7 +174,6 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 			return fail("return mismatch");
 		}
 	}
-	writefln("%sFunction types match! [PASS]", indent);
 	return true;
 }
 
