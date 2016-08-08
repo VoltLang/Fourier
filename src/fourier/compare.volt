@@ -38,6 +38,14 @@ fn listDiscrepancies(cPath: string, jsonPath: string) bool
 	return nameComparison(cPath, cNames, jsonPath, jsonNames, indent);
 }
 
+fn ignoreName(name: string) bool
+{
+	switch (name) {
+	case "size_t": return true;
+	default: return false;
+	}
+}
+
 fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[],
 	indent: string) bool
 {
@@ -62,12 +70,12 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 
 	bool pass = true;
 	foreach (name, named; cNames) {
+		asParent := cast(Parent)named;
+		if (asParent !is null && asParent.isAnonymous || ignoreName(name)) {
+			continue;
+		}
 		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
-			asParent := cast(Parent)named;
-			if (asParent !is null && asParent.isAnonymous) {
-				continue;
-			}
 			pass = false;
 			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
 				indent, cName, getStringFromKind(named.kind), name, jName);
