@@ -1,23 +1,25 @@
 Fourier
 ===
 
-Fourier is tool to help generate and check bindings against C libraries.
+Fourier generates and validates C bindings.
 
 
 
 Tests
 ===
 
-The symbols are check against each other.
+Symbols (types, functions, etc) that are defined by the C module,
+are checked against those defined in the Volt bindings. Not only
+in existence, but in semantics.
 
 
 
 Failures
 ---
 
-###### Function definitions
+###### Function Definition Failures
 
-If the type of a function is different between the header
+The type of a function varies between the header
 and the Volt module.
 
 ```
@@ -28,18 +30,18 @@ fn fopen(int) FILE*;
 FILE* fopen(const char *, const char *);
 ```
 
-###### Struct definitions
+###### Struct Definition Failures
 
-If the layout of a struct is different between the header and
-the Volt module. In the below case, the first fields size is
-wrong, and the second field has the wrong signed ness.
+The layout of a struct varies between the header and
+the Volt module. In the following case, the first field's size is
+incorrect, and the second field has the wrong signedness.
 
 ```
 // Volt
 struct Foo
 {
-	int foo;
-	int bar;
+	foo: i32;
+	bar: i32;
 }
 
 // C
@@ -49,9 +51,9 @@ typedef struct {
 }
 ```
 
-###### Extra Volt defines
+###### Extra Volt Define Failure
 
-If the Volt module define a function that the header does not define.
+The Volt module defines a function that the header does not.
 
 ```
 // Volt
@@ -66,9 +68,9 @@ int lconv(...);
 Warnings
 ---
 
-###### Extra header functions
+###### Extra Header Function Warning
 
-If the header define a function that the Volt module does not define.
+The header defines a function that the Volt module does not.
 
 ```
 // Volt
@@ -80,12 +82,12 @@ fn lconv(...) i32;
 
 
 
-Silenced optional
+Suggestions
 ---
 
-###### Extra Volt structs
+###### Extra Volt Struct Suggestion
 
-If volt defines structs that the header does not.
+Volt defines struct(s) that the header does not.
 
 ```
 // Volt
