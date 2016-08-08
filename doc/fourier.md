@@ -96,3 +96,17 @@ struct Foo {}
 // C
 // Foo not defined
 ```
+
+###### Extra Volt Function Suggestion
+
+Volt defines a function that the header does not.
+Probably want to ignore functions with bodies, for reproducing macros etc.
+
+```
+// Volt
+fn extrafn();  // !
+fn extrafn2() {}  // okay
+
+// C
+// Neither of those functions defined.
+```
