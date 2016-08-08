@@ -42,7 +42,7 @@ fn ignoreName(name: string) bool
 {
 	switch (name) {
 	case "size_t": return true;
-	default: return false;
+	default: return name.length == 0 || name[0] == '_';
 	}
 }
 
