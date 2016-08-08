@@ -76,8 +76,7 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 		}
 		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
-			pass = false;
-			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [FAIL]",
+			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [WARNING]",
 				indent, cName, getStringFromKind(named.kind), name, jName);
 			continue;
 		}
