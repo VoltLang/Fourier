@@ -156,7 +156,7 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 {
 	fn fail(reason: string) bool
 	{
-		writefln("%sFunction match failure. (%s) [FAIL]", indent, reason);
+		writefln("%sFunction '%s' match failure. (%s) [FAIL]", indent, cFunction.name, reason);
 		return false;
 	}
 	if (cFunction.args.length != jsonFunction.args.length ||
