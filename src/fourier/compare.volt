@@ -7,6 +7,7 @@ module fourier.compare;
 
 import watt.io : writefln, writeln;
 import watt.io.file : read;
+import watt.text.format : format;
 
 import lib.clang;  // Every clang_* function and CX* type.
 
@@ -173,7 +174,7 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 			return fail("not a valid argument");
 		}
 		if (!argsEqual(cArg, jArg, indent)) {
-			return fail("argument mismatch");
+			return fail(format("argument mismatch C:'%s' Volt:'%s'", cArg.type, jArg.type));
 		}
 	}
 	foreach (i; 0 .. cFunction.rets.length) {
