@@ -4,7 +4,7 @@ module main;
 
 import watt.conv : toStringz;
 import watt.io;
-import watt.io.file : read;
+import watt.io.file : read, isFile;
 import watt.text.getopt;
 import watt.process;
 import watt.path : temporaryFilename;
@@ -32,6 +32,10 @@ fn main(args: string[]) i32
 		return 0;
 	}
 	arg := args.length > 1 ? args[1] : "test/test.c";
+	if (!isFile(arg)) {
+		error.writefln("Couldn't read file '%s'.", arg);
+		return 1;
+	}
 	if (jsonName != "") {
 		return listDiscrepancies(arg, jsonName) ? 0 : 1;
 	} else if (voltSource != "") {
@@ -40,8 +44,9 @@ fn main(args: string[]) i32
 		return testVimportGenerationAgainstCFile(arg, vimportSource) ? 0 : 1;
 	} else {
 		test(arg, printDebug, moduleName);
+		return 0;
 	}
-	return 0;
+	return 1;
 }
 
 fn usage()
