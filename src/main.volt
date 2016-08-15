@@ -20,12 +20,13 @@ import fourier.compare;
 fn main(args: string[]) i32
 {
 	printDebug, printUsage : bool;
-	moduleName, jsonName, voltSource : string;
+	moduleName, jsonName, voltSource, vimportSource : string;
 	getopt(ref args, "debug|d", ref printDebug);
 	getopt(ref args, "help|h", ref printUsage);
 	getopt(ref args, "module|m", ref moduleName);
 	getopt(ref args, "json|j", ref jsonName);
 	getopt(ref args, "volt|v", ref voltSource);
+	getopt(ref args, "import|i", ref vimportSource);
 	if (printUsage) {
 		usage();
 		return 0;
@@ -35,6 +36,8 @@ fn main(args: string[]) i32
 		return listDiscrepancies(arg, jsonName) ? 0 : 1;
 	} else if (voltSource != "") {
 		return testVoltGenerationAgainstCFile(arg, voltSource) ? 0 : 1;
+	} else if (vimportSource != "") {
+		return testVimportGenerationAgainstCFile(arg, vimportSource) ? 0 : 1;
 	} else {
 		test(arg, printDebug, moduleName);
 	}
@@ -49,12 +52,23 @@ fn usage()
 	writeln("\t--module|-m  override the default module name for the created module.");
 	writeln("\t--json|-j    supply a JSON file to compare the header file against.");
 	writeln("\t--volt|-v    invoke $VOLT to create a json file from, and compare against the header file.");
+	writeln("\t--import|-i  invoke $VOLT with --import-as-src.");
 }
 
 fn testVoltGenerationAgainstCFile(cSource: string, voltSource: string) bool
 {
 	jsonFile := temporaryFilename(".json");
 	pid := spawnProcess(getEnv("VOLT"), ["-c", "-jo", jsonFile, voltSource]);
+	pid.wait();
+	ret := listDiscrepancies(cSource, jsonFile);
+	unlink(toStringz(jsonFile));
+	return ret;
+}
+
+fn testVimportGenerationAgainstCFile(cSource: string, voltSource: string) bool
+{
+	jsonFile := temporaryFilename(".json");
+	pid := spawnProcess(getEnv("VOLT"), ["-c", "-jo", jsonFile, "--import-as-src", voltSource]);
 	pid.wait();
 	ret := listDiscrepancies(cSource, jsonFile);
 	unlink(toStringz(jsonFile));
