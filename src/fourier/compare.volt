@@ -117,9 +117,18 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 	return false;
 }
 
-fn typesEqual(a: string, b: string, indent: string) bool
+fn typesEqual(c: string, j: string, indent: string) bool
 {
-	return a == b;
+	if (typeCludge(c, j)) {
+		return true;
+	}
+	return c == j;
+}
+
+// Are these two types special cased to be equal?
+fn typeCludge(c: string, j: string) bool
+{
+	return c == "const(char)*" && j == "const(const(char)*)";
 }
 
 fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
