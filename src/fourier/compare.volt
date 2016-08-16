@@ -169,6 +169,10 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 		writefln("%sFunction '%s' match failure. (%s) [FAIL]", indent, cFunction.name, reason);
 		return false;
 	}
+	if (jsonFunction.hasBody) {
+		// This is probably a wrapper function, assume they've got it right.
+		return true;
+	}
 	if (cFunction.args.length != jsonFunction.args.length ||
 	    cFunction.rets.length != jsonFunction.rets.length) {
 		return fail("number of args or return types don't match");

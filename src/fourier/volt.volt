@@ -174,6 +174,7 @@ class Function : Named
 	args : Base[];
 	rets : Base[];
 	linkage : Linkage;
+	hasBody : bool;
 }
 
 fn buildFunction(name: string, args: Base[], rets: Base[]) Function
@@ -218,6 +219,7 @@ public:
 	rets : Base[];
 	args : Base[];
 	linkage : Linkage;
+	hasBody : bool;
 
 
 public:
@@ -236,6 +238,7 @@ public:
 			case "typeFull": this.typeFull = v.str(); break;
 			case "children": children.fromArray(ref v); break;
 			case "linkage": this.linkage = stringToLinkage(v.str()); break;
+			case "hasBody": this.hasBody = v.boolean(); break;
 			default: writefln("unknown key '" ~ k ~ "'");
 			}
 		}
@@ -318,6 +321,7 @@ public:
 		b.args = args;
 		b.rets = rets;
 		b.linkage = linkage;
+		b.hasBody = hasBody;
 		switch (kind) with (Kind) {
 		case Destructor: b.name = "~this"; break;
 		case Constructor: b.name = "this"; break;
