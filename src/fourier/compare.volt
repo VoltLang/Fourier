@@ -82,7 +82,8 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 			continue;
 		}
 		indent ~= "  ";
-		pass = pass && compare(named, *jsonNamed, indent);
+		result := compare(named, *jsonNamed, indent);
+		pass = pass && result;
 		indent = indent[0 .. $-2];
 	}
 	return pass;
