@@ -5,7 +5,7 @@
  */
 module fourier.compare;
 
-import watt.io : writefln, writeln;
+import watt.io : writefln, writeln, writef;
 import watt.io.file : read;
 import watt.text.format : format;
 
@@ -137,8 +137,8 @@ fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
 	if (typesEqual(cAlias.type, jAlias.type, indent)) {
 		return true;
 	} else {
-		writefln("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
-		writefln("%s %s", cAlias.type, jAlias.type);
+		writef("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
+		writefln(" C:%s Volt:%s", cAlias.type, jAlias.type);
 		return false;
 	}
 }
