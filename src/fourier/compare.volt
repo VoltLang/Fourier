@@ -193,7 +193,7 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 			return fail("not a valid return");
 		}
 		if (!retsEqual(cRet, jRet, indent)) {
-			return fail("return mismatch");
+			return fail(format("return mismatch C:'%s' Volt:'%s'", cRet.type, jRet.type));
 		}
 	}
 	return true;
