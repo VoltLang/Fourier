@@ -128,7 +128,9 @@ fn typesEqual(c: string, j: string, indent: string) bool
 // Are these two types special cased to be equal?
 fn typeCludge(c: string, j: string) bool
 {
-	return c == "const(char)*" && j == "const(const(char)*)";
+	return c.length > 6 && c[0 .. 6] == "const(" &&
+		j.length > 12 && j[0 .. 12] == "const(const(" &&
+		j[12 .. $-1] == c[6 .. $];
 }
 
 fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
