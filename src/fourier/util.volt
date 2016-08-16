@@ -108,8 +108,8 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 	case CXType_Short: return applyConst("i16");
 	case CXType_UInt: return applyConst("u32");
 	case CXType_Int: return applyConst("i32");
-	case CXType_ULong: return applyConst("c_long");
-	case CXType_Long: return applyConst("c_ulong");
+	case CXType_ULong: return applyConst("c_ulong");
+	case CXType_Long: return applyConst("c_long");
 	case CXType_ULongLong: return applyConst("u64");
 	case CXType_LongLong: return applyConst("i64");
 	case CXType_Bool: return applyConst("bool");
