@@ -119,7 +119,7 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 
 fn typesEqual(c: string, j: string, indent: string) bool
 {
-	if (typeCludge(c, j)) {
+	if (typeCludge(c, j) || ignoreName(c)) {
 		return true;
 	}
 	return c == j;
