@@ -204,7 +204,8 @@ fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 {
 	c := filterBases(cParent.children, filter.everything);
 	j := filterBases(jParent.children, filter.everything);
-	result := strictNameComparison(cParent.name, c, jParent.name, j, indent);
+	newIndent := format("(%s %s) ", getStringFromKind(cParent.kind), cParent.name);
+	result := strictNameComparison(cParent.name, c, jParent.name, j, newIndent);
 	return result;
 }
 
