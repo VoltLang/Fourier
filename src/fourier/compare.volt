@@ -100,8 +100,7 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 
 	bool pass = true;
 	foreach (name, named; cNames) {
-		asParent := cast(Parent)named;
-		if (asParent !is null && asParent.isAnonymous || ignoreName(name)) {
+		if (ignoreName(name)) {
 			continue;
 		}
 		jsonNamed := name in jsonNames;
@@ -110,6 +109,19 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 				indent, cName, getStringFromKind(named.kind), name, jName);
 			continue;
 		}
+
+		// If the C is an alias referring to a parent type (e.g. struct) that's anonymous, check that type instead.
+		asAlias := cast(Alias)named;
+		if (asAlias !is null) {
+			referredType := asAlias.type in cNames;
+			if (referredType !is null) {
+				asParent := cast(Parent)*referredType;
+				if (asParent !is null && asParent.isAnonymous) {
+					named = asParent;
+				}
+			}
+		}
+
 		result := compare(named, *jsonNamed, indent);
 		pass = pass && result;
 	}
