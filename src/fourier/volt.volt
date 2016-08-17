@@ -377,21 +377,21 @@ fn getKindFromString(str : string) Kind
 fn getStringFromKind(kind: Kind) string
 {
 	final switch (kind) with (Kind) {
-	case Invalid: return "Invalid";
-	case Arg: return "Arg";
-	case Enum: return "Enum";
-	case Class: return "Class";
-	case Union: return "Union";
-	case Return: return "Return";
-	case Struct: return "Struct";
-	case Module: return "Module";
-	case Member: return "Member";
-	case Function: return "Function";
-	case Variable: return "Variable";
-	case Destructor: return "Destructor";
-	case Constructor: return "Constructor";
-	case Alias: return "Alias";
-	case Exp: return "Exp";
+	case Invalid: return "invalid";
+	case Arg: return "arg";
+	case Enum: return "enum";
+	case Class: return "class";
+	case Union: return "union";
+	case Return: return "return";
+	case Struct: return "struct";
+	case Module: return "module";
+	case Member: return "member";
+	case Function: return "function";
+	case Variable: return "variable";
+	case Destructor: return "destructor";
+	case Constructor: return "constructor";
+	case Alias: return "alias";
+	case Exp: return "exp";
 	}
 }
 
