@@ -47,6 +47,32 @@ fn ignoreName(name: string) bool
 	}
 }
 
+// Compare two lists of bases, ensuring that all Named in cBases match and are in the same order.
+fn strictNameComparison(cName: string, cBases: Base[], jName: string, jBases: Base[],
+	indent: string) bool
+{
+	pass := true;
+	foreach (i, cBase; cBases) {
+		cNamed := cast(Named)cBase;
+		if (cNamed is null) {
+			continue;
+		}
+		if (i >= jBases.length) {
+			pass = false;
+			break;
+		}
+		jNamed := cast(Named)jBases[i];
+		if (jNamed is null || cNamed.name != jNamed.name) {
+			pass = false;
+			continue;
+		}
+		result := compare(cNamed, jNamed, indent);
+		pass = result && pass;
+	}
+	return pass;
+}
+
+// Compare two lists of bases, ensuring that all Named in cBases match and are defined in jsonBases.
 fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[],
 	indent: string) bool
 {
@@ -175,7 +201,7 @@ fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 {
 	c := filterBases(cParent.children, filter.everything);
 	j := filterBases(jParent.children, filter.everything);
-	result := nameComparison(cParent.name, c, jParent.name, j, indent);
+	result := strictNameComparison(cParent.name, c, jParent.name, j, indent);
 	return result;
 }
 
