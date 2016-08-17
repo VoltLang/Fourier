@@ -58,11 +58,14 @@ fn strictNameComparison(cName: string, cBases: Base[], jName: string, jBases: Ba
 			continue;
 		}
 		if (i >= jBases.length) {
+			writefln("%s'%s' from Volt doesn't define '%s'. [FAIL]", indent, jName, cNamed.name);
 			pass = false;
 			break;
 		}
 		jNamed := cast(Named)jBases[i];
 		if (jNamed is null || cNamed.name != jNamed.name) {
+			writefln("%s'%s' in C has a named object '%s', whereas the Volt has named object '%s'. [FAIL]",
+				indent, cName, cNamed.name, jNamed.name);
 			pass = false;
 			continue;
 		}
