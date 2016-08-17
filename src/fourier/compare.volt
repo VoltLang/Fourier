@@ -142,6 +142,12 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 		return aliasComparison(cAlias, jAlias, indent);
 	}
 
+	if (cAlias !is null) {
+		return true;
+	}
+
+	writefln("%sType mismatch C:%s Volt:%s [FAIL]", indent,
+		getStringFromKind(cBase.kind), getStringFromKind(jBase.kind));
 	return false;
 }
 
