@@ -183,7 +183,7 @@ fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
 	if (typesEqual(cAlias.type, jAlias.type, indent)) {
 		return true;
 	} else {
-		writef("%sAlias '%s' type mismatch [FAILURE]", indent, cAlias.name);
+		writef("%sAlias '%s' type mismatch [FAIL]", indent, cAlias.name);
 		writefln(" C:%s Volt:%s", cAlias.type, jAlias.type);
 		return false;
 	}
@@ -195,7 +195,7 @@ fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
 	if (typesEqual(cVar.type, jVar.type, indent)) {
 		return true;
 	} else {
-		writefln("%sVariable '%s' type mismatch [FAILURE]", indent, cVar.name);
+		writefln("%sVariable '%s' type mismatch [FAIL]", indent, cVar.name);
 		return false;
 	}
 }
