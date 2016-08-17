@@ -110,10 +110,8 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 				indent, cName, getStringFromKind(named.kind), name, jName);
 			continue;
 		}
-		indent ~= "  ";
 		result := compare(named, *jsonNamed, indent);
 		pass = pass && result;
-		indent = indent[0 .. $-2];
 	}
 	return pass;
 }
@@ -195,17 +193,21 @@ fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
 	if (typesEqual(cVar.type, jVar.type, indent)) {
 		return true;
 	} else {
-		writefln("%sVariable '%s' type mismatch [FAIL]", indent, cVar.name);
+		writefln("%s%s '%s' type mismatch [FAIL]", indent, indent == "" ? "variable" : "field", cVar.name);
 		return false;
 	}
+}
+
+fn indentString(named: Named) string
+{
+	return format("(%s %s) ", getStringFromKind(named.kind), named.name);
 }
 
 fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 {
 	c := filterBases(cParent.children, filter.everything);
 	j := filterBases(jParent.children, filter.everything);
-	newIndent := format("(%s %s) ", getStringFromKind(cParent.kind), cParent.name);
-	result := strictNameComparison(cParent.name, c, jParent.name, j, newIndent);
+	result := strictNameComparison(cParent.name, c, jParent.name, j, indentString(cParent));
 	return result;
 }
 
