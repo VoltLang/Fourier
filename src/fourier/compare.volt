@@ -163,9 +163,27 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 	return false;
 }
 
+/* By the time we get size_t from C via clang, it's been changed.
+ * Nevertheless, the C standard says 'size_t', so check here.
+ */
+fn bothAreSizeT(c: string, j: string) bool
+{
+	if (j != "size_t") {
+		return false;
+	}
+	version (X86_64) {
+		return c == "c_ulong";
+	} else {
+		return c == "c_uint";  // TODO: Check on 32 bit machine.
+	}
+}
+
 fn typesEqual(c: string, j: string, indent: string) bool
 {
 	if (ignoreName(c)) {
+		return true;
+	}
+	if (bothAreSizeT(c, j)) {
 		return true;
 	}
 	return c == j;
