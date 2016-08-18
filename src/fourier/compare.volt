@@ -207,7 +207,8 @@ fn varComparison(cVar: Variable, jVar: Variable, indent: string) bool
 	if (typesEqual(cVar.type, jVar.type, indent)) {
 		return true;
 	} else {
-		writefln("%s%s '%s' type mismatch [FAIL]", indent, indent == "" ? "variable" : "field", cVar.name);
+		writefln("%s%s '%s' type mismatch C:%s Volt:%s [FAIL]", indent, indent == "" ? "variable" : "field",
+			cVar.name, cVar.type, jVar.type);
 		return false;
 	}
 }
