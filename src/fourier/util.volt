@@ -76,6 +76,15 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 	case CXType_Pointer:
 		base: CXType;
 		clang_getPointeeType(out base, type);
+		if (base.kind == CXType_Unexposed) {
+			canonicalType: CXType;
+			clang_getCanonicalType(out canonicalType, base);
+			if (canonicalType.kind == CXType_FunctionNoProto ||
+				canonicalType.kind == CXType_FunctionProto) {
+				// Don't print * for function pointers.
+				return applyConst(base.typeString(walker, id));
+			}
+		}
 		return applyConst(format("%s*", base.typeString(walker, id)));
 	case CXType_IncompleteArray:
 		base: CXType;
