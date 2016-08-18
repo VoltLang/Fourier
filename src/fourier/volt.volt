@@ -5,7 +5,8 @@ module fourier.volt;
 import core.exception;
 import watt.io.file;
 import watt.io : writefln;
-import watt.text.string : indexOf;
+import watt.text.string : indexOf, replace, endsWith;
+import watt.text.sink;
 import json = watt.text.json;
 
 /**
@@ -205,6 +206,35 @@ fn buildExp(value: string) Exp
 }
 
 /**
+ * Given a string 'const(const(T))', turn it into 'const(T)'.
+ * The outer const is stripped, so const(const(T)*) becomes const(T)*.
+ */
+fn compressConst(s: string) string
+{
+	/* The problem is, without involving a parser, that we can get fn (const(const(void)*)),
+	 * so a simple replace will shave off the closing paren of the function parameter definition.
+	 * Thus this horrific piece of code, that does a replace while checking for that case.
+	 */
+	if (s.indexOf("const(const(") != -1) {
+		s = s.replace("const(const(", "const(");
+		i := s.indexOf(")*)");
+		while (i != -1 && s.indexOf(")*) (") == -1) {
+			si := cast(size_t) i;
+			StringSink ss;
+			ss.sink(s[0 .. si+")*".length]);
+			ss.sink(s[si+")*)".length .. $]);
+			s = ss.toString();
+			i = s.indexOf(")*)");
+		}
+		return s;
+	}
+	if (s.endsWith("*)")) {
+		s = s.replace("*)", ")*");
+	}
+	return s;
+}
+
+/**
  * Used to collect information during parsing.
  */
 struct Info
@@ -233,7 +263,7 @@ public:
 			case "args": args.fromArray(ref v, Kind.Arg); break;
 			case "rets": rets.fromArray(ref v, Kind.Return); break;
 			case "name": this.name = v.str(); break;
-			case "type": this.type = v.str(); break;
+			case "type": this.type = compressConst(v.str()); break;
 			case "kind": this.kind = getKindFromString(v.str()); break;
 			case "typeFull": this.typeFull = v.str(); break;
 			case "children": children.fromArray(ref v); break;

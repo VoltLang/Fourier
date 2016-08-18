@@ -165,32 +165,10 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 
 fn typesEqual(c: string, j: string, indent: string) bool
 {
-	if (typeCludge(c, j) || ignoreName(c)) {
+	if (ignoreName(c)) {
 		return true;
 	}
 	return c == j;
-}
-
-// Are these two types special cased to be equal?
-fn typeCludge(c: string, j: string) bool
-{
-	constLength : size_t = 6;
-	if (j.length <= constLength || c.length <= constLength) {
-		return false;
-	}
-
-	cStartsConst := c[0 .. constLength] == "const(";
-	jStartsConstConst := j.length > constLength * 2 && j[0 .. constLength * 2] == "const(const(";
-	if (cStartsConst && jStartsConstConst && j[constLength * 2 .. $-1] == c[constLength .. $]) {
-		return true;
-	}
-	jStartsConst := j[0 .. constLength] == "const(";
-	jEndsStarParen := j[$-2 .. $] == "*)";
-	cEndsParenStar := c[$-2 .. $] == ")*";
-	if (cStartsConst && jStartsConst && jEndsStarParen && cEndsParenStar) {
-		return c[constLength .. $-2] == j[constLength .. $-2];
-	}
-	return false;
 }
 
 fn aliasComparison(cAlias: Alias, jAlias: Alias, indent: string) bool
