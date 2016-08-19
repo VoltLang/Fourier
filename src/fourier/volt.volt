@@ -226,6 +226,10 @@ fn compressConst(s: string) string
 			s = ss.toString();
 			i = s.indexOf(")*)");
 		}
+		s = s.replace("*)*", ")**");
+		if (s.endsWith("*)")) {
+			s = s[0 .. $-1];
+		}
 		return s;
 	}
 	if (s.endsWith("*)")) {
