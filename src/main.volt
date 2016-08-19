@@ -95,24 +95,3 @@ fn test(file: string, printDebug: bool, moduleName: string)
 	clang_disposeIndex(index);
 }
 
-fn printDiag(tu: CXTranslationUnit, file: string)
-{
-	count := clang_getNumDiagnostics(tu);
-
-	foreach (i; 0 .. count) {
-		loc: CXSourceLocation;
-		diag: CXDiagnostic;
-		text: CXString;
-		info: string;
-		line, column: u32;
-
-		diag = clang_getDiagnostic(tu, i);
-		loc = clang_getDiagnosticLocation(diag);
-		text = clang_getDiagnosticSpelling(diag);
-
-		clang_getSpellingLocation(loc, null, &line, &column, null);
-		info = getVoltString(text);
-
-		error.writefln("%s:%s:%s info %s", file, line, column, info);
-	}
-}

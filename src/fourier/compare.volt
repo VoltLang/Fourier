@@ -5,7 +5,7 @@
  */
 module fourier.compare;
 
-import watt.io : writefln, writeln, writef;
+import watt.io;
 import watt.io.file : read;
 import watt.text.format : format;
 
@@ -339,8 +339,30 @@ fn loadC(cPath: string) ClangContext
 	args := ["-I.".ptr];
 	context.tu = clang_parseTranslationUnit(context.index, cPath.ptr, args.ptr,
 		cast(i32)args.length, null, 0, CXTranslationUnit_None);
-	// TODO: Error handling.
+	context.tu.printDiag(cPath);
 	return context;
+}
+
+fn printDiag(tu: CXTranslationUnit, file: string)
+{
+	count := clang_getNumDiagnostics(tu);
+
+	foreach (i; 0 .. count) {
+		loc: CXSourceLocation;
+		diag: CXDiagnostic;
+		text: CXString;
+		info: string;
+		line, column: u32;
+
+		diag = clang_getDiagnostic(tu, i);
+		loc = clang_getDiagnosticLocation(diag);
+		text = clang_getDiagnosticSpelling(diag);
+
+		clang_getSpellingLocation(loc, null, &line, &column, null);
+		info = getVoltString(text);
+
+		error.writefln("%s:%s:%s info %s", file, line, column, info);
+	}
 }
 
 /**
