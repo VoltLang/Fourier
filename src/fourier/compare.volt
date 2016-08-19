@@ -41,10 +41,7 @@ fn listDiscrepancies(cPath: string, jsonPath: string) bool
 
 fn ignoreName(name: string) bool
 {
-	switch (name) {
-	case "size_t": return true;
-	default: return name.length == 0 || name[0] == '_';
-	}
+	return name.length == 0 || name[0] == '_';
 }
 
 // Compare two lists of bases, ensuring that all Named in cBases match and are in the same order.
@@ -100,9 +97,6 @@ fn nameComparison(cName: string, cBases: Base[], jName: string, jsonBases: Base[
 
 	bool pass = true;
 	foreach (name, named; cNames) {
-		if (ignoreName(name)) {
-			continue;
-		}
 		jsonNamed := name in jsonNames;
 		if (jsonNamed is null) {
 			writefln("%s'%s' defines %s '%s' that is undefined by '%s'. [WARNING]",
