@@ -251,7 +251,7 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 			return fail("not a valid argument");
 		}
 		if (!argsEqual(cArg, jArg, indent)) {
-			return fail(format("argument mismatch C:'%s' Volt:'%s'", cArg.type, jArg.type));
+			return fail(format("argument '%s' mismatch C:'%s' Volt:'%s'", cArg.name, cArg.type, jArg.type));
 		}
 	}
 	foreach (i; 0 .. cFunction.rets.length) {
