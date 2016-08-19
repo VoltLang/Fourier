@@ -5,9 +5,14 @@
  */
 module fourier.compare;
 
+import watt.conv : toStringz;
 import watt.io;
-import watt.io.file : read;
+import watt.path : temporaryFilename;
+import watt.io.file : read ;
+import watt.io.streams : OutputFileStream, InputFileStream;
+import watt.process.spawn : spawnProcess;
 import watt.text.format : format;
+import core.stdc.stdio : unlink;
 
 import lib.clang;  // Every clang_* function and CX* type.
 
@@ -332,6 +337,39 @@ struct ClangContext
 }
 
 /**
+ * libclang doesn't know anything about the default search paths.
+ * Ask clang about them, and append them to args.
+ */
+fn addDefaultPaths(ref args: const(char)*[])
+{
+	fname := temporaryFilename("fourierclangoutput");
+	ofs := new OutputFileStream(fname);
+	scope (exit) unlink(toStringz(fname));
+	pid := spawnProcess("/bin/sh", ["-c", "echo | clang -v -S -x c -"],
+		null, ofs.handle, ofs.handle, null);
+	pid.wait();
+	ofs.close();
+	ifs := new InputFileStream(fname);
+	searching := false;
+	while (!ifs.eof()) {
+		line := ifs.readln();
+		if (!searching && line == "#include <...> search starts here:") {
+			searching = true;
+			continue;
+		}
+		if (!searching) {
+			continue;
+		}
+		if (line == "End of search list.") {
+			break;
+		}
+		assert(line.length > 1);
+		args ~= toStringz(format("-I%s", line[1 .. $]));  // 1 == leading space
+	}
+	ifs.close();
+}
+
+/**
  * Initialise libclang, and parse a C file.
  *
  * Params:
@@ -343,6 +381,7 @@ fn loadC(cPath: string) ClangContext
 	context: ClangContext;
 	context.index = clang_createIndex(0, 0);
 	args := ["-I.".ptr];
+	addDefaultPaths(ref args);
 	context.tu = clang_parseTranslationUnit(context.index, cPath.ptr, args.ptr,
 		cast(i32)args.length, null, 0, CXTranslationUnit_None);
 	context.tu.printDiag(cPath);
