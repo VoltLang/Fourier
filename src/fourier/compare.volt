@@ -381,7 +381,9 @@ fn loadC(cPath: string) ClangContext
 	context: ClangContext;
 	context.index = clang_createIndex(0, 0);
 	args := ["-I.".ptr];
-	addDefaultPaths(ref args);
+	version (!MSVC) {
+		addDefaultPaths(ref args);
+	}
 	context.tu = clang_parseTranslationUnit(context.index, cPath.ptr, args.ptr,
 		cast(i32)args.length, null, 0, CXTranslationUnit_None);
 	context.tu.printDiag(cPath);
