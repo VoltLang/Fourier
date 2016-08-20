@@ -2,3 +2,6 @@
 watt
 --if-linux
 -lclang-3.8
+--if-msvc
+-l
+libclang.lib
