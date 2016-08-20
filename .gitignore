@@ -6,3 +6,5 @@
 /.bin
 /.obj
 /.battery.config.txt
+/*.lib
+/*.dll
