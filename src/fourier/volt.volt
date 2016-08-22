@@ -398,6 +398,7 @@ fn getKindFromString(str : string) Kind
 	case "ctor": return Constructor;
 	case "dtor": return Destructor;
 	case "enum": return Enum;
+	case "enumdecl": return Enum;
 	case "class": return Class;
 	case "union": return Union;
 	case "struct": return Struct;
