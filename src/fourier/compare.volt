@@ -47,6 +47,7 @@ fn listDiscrepancies(cPath: string, jsonPath: string) bool
 fn ignoreName(name: string) bool
 {
 	switch (name) {
+	case "va_list":
 	case "size_t": return true;
 	default: return name.length == 0 || name[0] == '_';
 	}
