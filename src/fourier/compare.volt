@@ -450,24 +450,6 @@ fn filterBases(bases: Base[], dg: filterdg) Base[]
 alias filterdg = bool delegate(Base);
 private struct Filter
 {
-	fn publicStructs(base: Base) bool
-	{
-		p := cast(Parent)base;
-		return base.kind == Kind.Struct && p !is null && !p.isAnonymous;
-	}
-
-	fn functions(base: Base) bool
-	{
-		f := cast(Function)base;
-		return f !is null;
-	}
-
-	fn named(base: Base) bool
-	{
-		n := cast(Named)base;
-		return n !is null;
-	}
-
 	fn everything(base: Base) bool
 	{
 		return true;
