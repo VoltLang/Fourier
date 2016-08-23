@@ -68,6 +68,14 @@ public:
 	name : string;
 }
 
+fn buildEnum(name: string) Named
+{
+	named := new Named();
+	named.kind = Kind.Enum;
+	named.name = name;
+	return named;
+}
+
 /**
  * Base class for things with children, like Module, Class, Structs.
  */

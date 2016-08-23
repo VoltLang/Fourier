@@ -160,6 +160,13 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 		return aliasComparison(cAlias, jAlias, indent);
 	}
 
+	cNamed := cast(Named)cBase;
+	jNamed := cast(Named)jBase;
+	if (cNamed !is null && jNamed !is null &&
+		cNamed.kind == Kind.Enum && jNamed.kind == Kind.Enum) {
+		return cNamed.name == jNamed.name;
+	}
+
 	if (cAlias !is null) {
 		return true;
 	}

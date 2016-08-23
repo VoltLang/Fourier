@@ -53,6 +53,8 @@ fn visitAndPrint(cursor: CXCursor, p: CXCursor, ptr: void*) CXChildVisitResult
 	case CXCursor_UnionDecl: doUnionDecl(ref cursor, w); break;
 	case CXCursor_VarDecl: doVarDecl(ref cursor, w); break;
 	case CXCursor_IntegerLiteral: doIntLiteral(ref cursor, w); break;
+	case CXCursor_EnumDecl: doEnumDecl(ref cursor, w); break;
+	case CXCursor_EnumConstantDecl: doEnumConstantDecl(ref cursor, w); break;
 	default:
 	}
 
@@ -192,6 +194,20 @@ fn isAssign(ref cursor: CXCursor, w: Walker) bool
 		}
 	}
 	return false;
+}
+
+fn doEnumDecl(ref cursor: CXCursor, w: Walker)
+{
+	structType: CXType;
+	clang_getCursorType(out structType, cursor);
+	clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
+}
+
+fn doEnumConstantDecl(ref cursor: CXCursor, w: Walker)
+{
+	name := getVoltString(clang_getCursorSpelling(cursor));
+	e := buildEnum(name);
+	w.addBase(e);
 }
 
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
