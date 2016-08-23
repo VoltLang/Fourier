@@ -1,4 +1,4 @@
 struct S {
-	int[32] y;
+	int y[32];
 };
 
