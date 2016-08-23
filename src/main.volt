@@ -62,7 +62,7 @@ fn usage()
 
 fn testVoltGenerationAgainstCFile(cSource: string, voltSource: string) bool
 {
-	jsonFile := temporaryFilename(".json");
+	jsonFile := temporaryFilename(".json", "fourier");
 	pid := spawnProcess(getEnv("VOLT"), ["-c", "-jo", jsonFile, voltSource]);
 	pid.wait();
 	ret := listDiscrepancies(cSource, jsonFile);
@@ -72,7 +72,7 @@ fn testVoltGenerationAgainstCFile(cSource: string, voltSource: string) bool
 
 fn testVimportGenerationAgainstCFile(cSource: string, voltSource: string) bool
 {
-	jsonFile := temporaryFilename(".json");
+	jsonFile := temporaryFilename(".json", "fourier");
 	pid := spawnProcess(getEnv("VOLT"), ["-c", "-jo", jsonFile, "--import-as-src", voltSource]);
 	pid.wait();
 	ret := listDiscrepancies(cSource, jsonFile);

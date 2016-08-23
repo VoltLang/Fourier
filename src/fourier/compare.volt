@@ -343,7 +343,7 @@ struct ClangContext
  */
 fn addDefaultPaths(ref args: const(char)*[])
 {
-	fname := temporaryFilename("fourierclangoutput");
+	fname := temporaryFilename("fourierclangoutput", "fourier");
 	ofs := new OutputFileStream(fname);
 	scope (exit) unlink(toStringz(fname));
 	pid := spawnProcess("/bin/sh", ["-c", "echo | clang -v -S -x c -"],
