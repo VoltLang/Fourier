@@ -3,6 +3,7 @@
 module fourier.volt;
 
 import core.exception;
+import watt.conv;
 import watt.io.file;
 import watt.io : writefln;
 import watt.text.string : indexOf, replace, endsWith;
@@ -17,6 +18,7 @@ enum Kind
 	Invalid,
 	Arg,
 	Enum,
+	EnumDecl,
 	Class,
 	Union,
 	Return,
@@ -68,11 +70,18 @@ public:
 	name : string;
 }
 
-fn buildEnum(name: string) Named
+class EnumDecl : Named
 {
-	named := new Named();
-	named.kind = Kind.Enum;
+public:
+	value : int;
+}
+
+fn buildEnumDecl(name: string, value: int) EnumDecl
+{
+	named := new EnumDecl();
+	named.kind = Kind.EnumDecl;
 	named.name = name;
+	named.value = value;
 	return named;
 }
 
@@ -262,6 +271,7 @@ public:
 	args : Base[];
 	linkage : Linkage;
 	hasBody : bool;
+	value : string;
 
 
 public:
@@ -281,6 +291,7 @@ public:
 			case "children": children.fromArray(ref v); break;
 			case "linkage": this.linkage = stringToLinkage(v.str()); break;
 			case "hasBody": this.hasBody = v.boolean(); break;
+			case "value": this.value = v.str(); break;
 			default: writefln("unknown key '" ~ k ~ "'");
 			}
 		}
@@ -347,6 +358,15 @@ public:
 		return b;
 	}
 
+	fn toEnumDecl() EnumDecl
+	{
+		b := new EnumDecl();
+		copyToNamed(b);
+		b.kind = Kind.EnumDecl;
+		b.value = toInt(value);
+		return b;
+	}
+
 	fn toAlias() Alias
 	{
 		b := new Alias();
@@ -384,6 +404,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		case Alias: arr ~= info.toAlias(); break;
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
+		case EnumDecl: arr ~= info.toEnumDecl(); break;
 		case Class: arr ~= info.toParent(); break;
 		case Union: arr ~= info.toParent(); break;
 		case Return: arr ~= info.toReturn(); break;
@@ -406,7 +427,7 @@ fn getKindFromString(str : string) Kind
 	case "ctor": return Constructor;
 	case "dtor": return Destructor;
 	case "enum": return Enum;
-	case "enumdecl": return Enum;
+	case "enumdecl": return EnumDecl;
 	case "class": return Class;
 	case "union": return Union;
 	case "struct": return Struct;
@@ -423,6 +444,7 @@ fn getStringFromKind(kind: Kind) string
 	case Invalid: return "invalid";
 	case Arg: return "arg";
 	case Enum: return "enum";
+	case EnumDecl: return "enumdecl";
 	case Class: return "class";
 	case Union: return "union";
 	case Return: return "return";

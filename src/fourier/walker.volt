@@ -3,6 +3,7 @@
 module fourier.walker;
 
 import watt.io;
+import watt.conv : toInt;
 import watt.text.format : format;
 import watt.math.random : RandomGenerator;
 import core.stdc.time : time;
@@ -10,7 +11,7 @@ import core.stdc.time : time;
 import lib.clang;
 
 import fourier.visit;
-import fourier.volt : Base, Parent, Variable;
+import fourier.volt : Base, Parent, Variable, Enum, Exp;
 import fourier.print : print;
 
 class Walker

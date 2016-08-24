@@ -46,6 +46,7 @@ fn printBase(base: Base, ref indent: i32)
 	final switch (base.kind) with (Kind) {
 	case Invalid: writef("INVALID"); break;
 	case Arg: printArg(base, ref indent); break;
+	case EnumDecl: printEnumDecl(base, ref indent); break;
 	case Enum: printEnum(base, ref indent); break;
 	case Class: printClass(base, ref indent); break;
 	case Union: printUnion(base, ref indent); break;
@@ -80,6 +81,13 @@ fn printArg(base: Base, ref indent: i32)
 	} else {
 		writef("%s", arg.type);
 	}
+}
+
+fn printEnumDecl(base: Base, ref indent: i32)
+{
+	e := cast(EnumDecl)base;
+	assert(e !is null);
+	writef("enum %s = %s;", e.name, e.value);
 }
 
 fn printVariable(base: Base, ref indent: i32)

@@ -206,7 +206,7 @@ fn doEnumDecl(ref cursor: CXCursor, w: Walker)
 fn doEnumConstantDecl(ref cursor: CXCursor, w: Walker)
 {
 	name := getVoltString(clang_getCursorSpelling(cursor));
-	e := buildEnum(name);
+	e := buildEnumDecl(name, cast(i32)clang_getEnumConstantDeclValue(cursor));
 	w.addBase(e);
 }
 

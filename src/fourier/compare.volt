@@ -160,11 +160,15 @@ fn compare(cBase: Base, jBase: Base, indent: string) bool
 		return aliasComparison(cAlias, jAlias, indent);
 	}
 
-	cNamed := cast(Named)cBase;
-	jNamed := cast(Named)jBase;
-	if (cNamed !is null && jNamed !is null &&
-		cNamed.kind == Kind.Enum && jNamed.kind == Kind.Enum) {
-		return cNamed.name == jNamed.name;
+	cEnumDecl := cast(EnumDecl)cBase;
+	jEnumDecl := cast(EnumDecl)jBase;
+	if (cEnumDecl !is null && jEnumDecl !is null) {
+		if (cEnumDecl.value != jEnumDecl.value) {
+			writefln("%sEnum %s values don't match C:%s Volt:%s [FAIL]",
+				indent, cEnumDecl.name, cEnumDecl.value, jEnumDecl.value);
+			return false;
+		}
+		return true;
 	}
 
 	if (cAlias !is null) {
