@@ -363,7 +363,9 @@ public:
 		b := new EnumDecl();
 		copyToNamed(b);
 		b.kind = Kind.EnumDecl;
-		b.value = toInt(value);
+		if (value.length > 0) {
+			b.value = toInt(value);
+		}
 		return b;
 	}
 
