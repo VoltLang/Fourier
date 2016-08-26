@@ -443,16 +443,16 @@ fn unloadC(context: ClangContext)
  *       be returned.
  * Returns: An array of Bases that the dg applies to, or an empty list.
  */
-fn filterBases(bases: Base[], dg: filterdg) Base[]
+fn filterBases(bases: Base[], dgt: filterdg) Base[]
 {
 	ret: Base[];
 	foreach (base; bases) {
-		if (dg(base)) {
+		if (dgt(base)) {
 			ret ~= base;
 		}
 		parent := cast(Parent)base;
 		if (parent !is null && parent.kind == Kind.Module) {
-			ret ~= filterBases(parent.children, dg);
+			ret ~= filterBases(parent.children, dgt);
 		}
 	}
 	return ret;
