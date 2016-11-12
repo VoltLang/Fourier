@@ -1,7 +1,9 @@
 --dep
 watt
+--if-osx
 --if-linux
--lclang-3.8
+-l
+clang-3.8
 --if-msvc
 -l
 libclang.lib
