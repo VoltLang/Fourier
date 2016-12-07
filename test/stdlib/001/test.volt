@@ -1,3 +1,2 @@
-//T run:fourier -i core.stdc.stdio %p/../pdclib/stdio.h
-//T compiles:yes
-//T retval:0
+//T run:volta -c -jo %t.json --import-as-src core.stdc.stdio
+//T run:fourier -j %t.json %S/../pdclib/stdio.h

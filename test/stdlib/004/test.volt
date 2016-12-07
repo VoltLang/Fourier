@@ -1,3 +1,2 @@
-//T run:fourier -i core.stdc.time %p/../pdclib/time.h
-//T compiles:yes
-//T retval:0
+//T run:volta -c -jo %t.json --import-as-src core.stdc.time
+//T run:fourier -j %t.json %S/../pdclib/time.h

@@ -1,5 +1,5 @@
-//T run:fourier -v %p/test.volt %p/test.h
-//T compiles:yes
+//T run:volta -c -jo %t.json %S/test.volt
+//T run:fourier -j %t.json %S/test.h
 // Tests simple structs and integer types.
 module test;
 
