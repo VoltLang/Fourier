@@ -66,7 +66,7 @@ fn strictNameComparison(cName: string, cBases: Base[], jName: string, jBases: Ba
 		if (i >= jBases.length) {
 			writefln("%s'%s' from Volt doesn't define '%s'. [FAIL]", indent, jName, cNamed.name);
 			pass = false;
-			break;
+			continue;
 		}
 		jNamed := cast(Named)jBases[i];
 		if (jNamed is null || cNamed.name != jNamed.name) {
