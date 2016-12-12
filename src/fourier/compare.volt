@@ -46,6 +46,14 @@ fn listDiscrepancies(cPath: string, jsonPath: string) bool
 
 fn ignoreName(name: string) bool
 {
+	version (OSX) {
+		switch (name) {  // OS X specific ignores
+		case "stdout":
+		case "stderr":
+		case "stdin": return true;
+		default: break;
+		}
+	}
 	switch (name) {
 	case "va_list":
 	case "size_t": return true;
