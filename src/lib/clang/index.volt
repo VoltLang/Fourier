@@ -360,6 +360,7 @@ alias CXType_VariableArray = CXTypeKind.CXType_VariableArray;
 alias CXType_DependentSizedArray = CXTypeKind.CXType_DependentSizedArray;
 alias CXType_MemberPointer = CXTypeKind.CXType_MemberPointer;
 alias CXType_Auto = CXTypeKind.CXType_Auto;
+alias CXType_Elaborated = CXTypeKind.CXType_Elaborated;
 
 //CXCallingConv
 alias CXCallingConv_Default = CXCallingConv.CXCallingConv_Default;
@@ -857,6 +858,7 @@ string toString(CXTypeKind kind)
 	case CXType_DependentSizedArray: return "CXType_DependentSizedArray";
 	case CXType_MemberPointer: return "CXType_MemberPointer";
 	case CXType_Auto: return "CXType_Auto";
+	case CXType_Elaborated: return "CXType_Elaborated";
 	default: return "CXType_NOT_YET_BOUND";
 	}
 }

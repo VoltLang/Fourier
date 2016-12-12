@@ -102,6 +102,7 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		cursor := clang_getTypeDeclaration(type);
 		return applyConst(getVoltString(clang_getCursorSpelling(cursor)));
 	case CXType_Unexposed:
+	case CXType_Elaborated:
 		canonicalType: CXType;
 		clang_getCanonicalType(out canonicalType, type);
 		if (!clang_equalTypes(type, canonicalType)) {
