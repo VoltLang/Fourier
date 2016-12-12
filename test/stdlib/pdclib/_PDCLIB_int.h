@@ -363,8 +363,10 @@ typedef struct _PDCLIB_mbstate {
              char _PendChar;
 } _PDCLIB_mbstate_t;
 
+#ifndef _PDCLIB_STDIO_H
 typedef struct _PDCLIB_locale    *_PDCLIB_locale_t;
 typedef struct lconv              _PDCLIB_lconv_t;
+#endif
 
 _PDCLIB_size_t _PDCLIB_mb_cur_max( void );
 
