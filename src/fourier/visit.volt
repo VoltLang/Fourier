@@ -91,8 +91,7 @@ fn doTypedefDecl(ref cursor: CXCursor, w: Walker)
 
 	// struct Foo {}; typedef struct Foo Foo;
 	typeName := getVoltString(clang_getTypeSpelling(type));
-	canonical : CXType;
-	clang_getCanonicalType(out canonical, type);
+	canonical := clang_getCanonicalType(type);
 	canonicalCursor := clang_getTypeDeclaration(canonical);
 	canonicalName := getVoltString(clang_getCursorSpelling(canonicalCursor));
 	if (tdName == canonicalName && canonical.kind == CXTypeKind.CXType_Record) {
@@ -135,8 +134,7 @@ fn doUnionDecl(ref cursor: CXCursor, w: Walker)
 
 fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 {
-	structType: CXType;
-	clang_getCursorType(out structType, cursor);
+	structType := clang_getCursorType(cursor);
 
 	kind: Kind;
 	words := decl.split(' ');
@@ -161,8 +159,7 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 {
 
-	structType: CXType;
-	clang_getCursorType(out structType, cursor);
+	structType := clang_getCursorType(cursor);
 
 	structName := getVoltString(clang_getCursorSpelling(cursor));
 	isAnonymous := false;
@@ -198,8 +195,7 @@ fn isAssign(ref cursor: CXCursor, w: Walker) bool
 
 fn doEnumDecl(ref cursor: CXCursor, w: Walker)
 {
-	structType: CXType;
-	clang_getCursorType(out structType, cursor);
+	structType := clang_getCursorType(cursor);
 	clang_visitChildren(cursor, visitAndPrint, cast(void*)w);
 }
 
@@ -212,8 +208,7 @@ fn doEnumConstantDecl(ref cursor: CXCursor, w: Walker)
 
 fn doVarDecl(ref cursor: CXCursor, w: Walker)
 {
-	type: CXType;
-	clang_getCursorType(out type, cursor);
+	type := clang_getCursorType(cursor);
 
 	declType := clang_getTypeDeclaration(type);
 	if (clang_Cursor_isAnonymous(declType) &&

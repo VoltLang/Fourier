@@ -74,11 +74,9 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		}
 		return applyConst(tdName);
 	case CXType_Pointer:
-		base: CXType;
-		clang_getPointeeType(out base, type);
+		base := clang_getPointeeType(type);
 		if (base.kind == CXType_Unexposed) {
-			canonicalType: CXType;
-			clang_getCanonicalType(out canonicalType, base);
+			canonicalType := clang_getCanonicalType(base);
 			if (canonicalType.kind == CXType_FunctionNoProto ||
 				canonicalType.kind == CXType_FunctionProto) {
 				// Don't print * for function pointers.
@@ -87,12 +85,10 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		}
 		return applyConst(format("%s*", base.typeString(walker, id)));
 	case CXType_IncompleteArray:
-		base: CXType;
-		clang_getArrayElementType(out base, type);
+		base :=	clang_getArrayElementType(type);
 		return applyConst(format("%s*", base.typeString(walker, id)));
 	case CXType_ConstantArray:
-		base: CXType;
-		clang_getArrayElementType(out base, type);
+		base := clang_getArrayElementType(type);
 		sz: i64 = clang_getArraySize(type);
 		return applyConst(format("%s[%s]", base.typeString(walker, id), sz));
 	case CXType_Record:
@@ -103,8 +99,7 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		return applyConst(getVoltString(clang_getCursorSpelling(cursor)));
 	case CXType_Unexposed:
 	case CXType_Elaborated:
-		canonicalType: CXType;
-		clang_getCanonicalType(out canonicalType, type);
+		canonicalType := clang_getCanonicalType(type);
 		if (!clang_equalTypes(type, canonicalType)) {
 			return typeString(canonicalType, walker, id);
 		}
