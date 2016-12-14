@@ -199,7 +199,7 @@ fn bothAreSizeT(c: string, j: string) bool
 	version (X86_64) {
 		return c == "c_ulong";
 	} else {
-		return c == "c_uint";  // TODO: Check on 32 bit machine.
+		return c == "u32";
 	}
 }
 
