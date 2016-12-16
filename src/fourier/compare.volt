@@ -365,7 +365,7 @@ fn addDefaultPaths(ref args: const(char)*[])
 	fname := temporaryFilename("fourierclangoutput", "fourier");
 	ofs := new OutputFileStream(fname);
 	scope (exit) unlink(toStringz(fname));
-	pid := spawnProcess("/bin/sh", ["-c", "echo | clang -v -S -x c -"],
+	pid := spawnProcess("/bin/sh", ["-c", "echo | clang -v -S -x c - -o -"],
 		null, ofs.handle, ofs.handle, null);
 	pid.wait();
 	ofs.close();
@@ -400,7 +400,7 @@ fn loadC(cPath: string) ClangContext
 {
 	context: ClangContext;
 	context.index = clang_createIndex(0, 0);
-	args := ["-I.".ptr];
+	args := ["-I.".ptr, "-o".ptr, "-".ptr];
 	version (!MSVC) {
 		addDefaultPaths(ref args);
 	}

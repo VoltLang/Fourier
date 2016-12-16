@@ -83,7 +83,7 @@ fn testVimportGenerationAgainstCFile(cSource: string, voltSource: string) bool
 fn test(file: string, printDebug: bool, moduleName: string)
 {
 	index := clang_createIndex(0, 0);
-	args := ["-I.".ptr];
+	args := ["-I.".ptr, "-o".ptr, "-".ptr];
 	tu := clang_parseTranslationUnit(index,
 		file.ptr, args.ptr, cast(int)args.length,
 		null, 0, CXTranslationUnit_None);
