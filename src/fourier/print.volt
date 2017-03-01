@@ -23,7 +23,7 @@ fn printTop(moduleName: string)
 	writefln("module %s;", moduleName);
 	// TODO: Dynamically determine when these are needed.
 	writeln("import watt.varargs;");
-	writeln("import core.stdc.config;\n");
+	writeln("import core.c.config;\n");
 }
 
 fn printBases(bases: Base[], ref indent: i32)

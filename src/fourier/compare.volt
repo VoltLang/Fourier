@@ -12,7 +12,7 @@ import watt.io.file : read ;
 import watt.io.streams : OutputFileStream, InputFileStream;
 import watt.process.spawn : spawnProcess;
 import watt.text.format : format;
-import core.stdc.stdio : unlink;
+import core.c.stdio : unlink;
 
 import lib.clang;  // Every clang_* function and CX* type.
 

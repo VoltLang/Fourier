@@ -14,8 +14,8 @@
 \*===----------------------------------------------------------------------===*/
 module lib.clang.c.Index;
 
-import core.stdc.config : c_long;
-import core.stdc.time : time_t;
+import core.c.config : c_long;
+import core.c.time : time_t;
 import lib.clang.c.CXString;
 import lib.clang.c.CXErrorCode;
 

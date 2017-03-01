@@ -6,7 +6,7 @@ import watt.io;
 import watt.conv : toInt;
 import watt.text.format : format;
 import watt.math.random : RandomGenerator;
-import core.stdc.time : time;
+import core.c.time : time;
 
 import lib.clang;
 

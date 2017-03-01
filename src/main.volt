@@ -8,7 +8,7 @@ import watt.io.file : read, isFile;
 import watt.text.getopt;
 import watt.process;
 import watt.path : temporaryFilename;
-import core.stdc.stdio : unlink;
+import core.c.stdio : unlink;
 
 import lib.clang;
 
