@@ -366,7 +366,7 @@ fn addDefaultPaths(ref args: const(char)*[])
 	ofs := new OutputFileStream(fname);
 	scope (exit) unlink(toStringz(fname));
 	pid := spawnProcess("/bin/sh", ["-c", "echo | clang -v -S -x c - -o -"],
-		null, ofs.handle, ofs.handle, null);
+		null, ofs, ofs, null);
 	pid.wait();
 	ofs.close();
 	ifs := new InputFileStream(fname);
