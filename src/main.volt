@@ -19,6 +19,11 @@ import fourier.compare;
 
 fn main(args: string[]) i32
 {
+	scope (exit) {
+		output.flush();
+		error.flush();
+	}
+
 	printDebug, printUsage : bool;
 	moduleName, jsonName, voltSource, vimportSource : string;
 	getopt(ref args, "debug|d", ref printDebug);
