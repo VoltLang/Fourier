@@ -465,9 +465,10 @@ fn getStringFromKind(kind: Kind) string
 fn parse(data : string) Base[]
 {
 	root := json.parse(data);
+	modulesRoot := root.lookupObjectKey("modules");
 
 	mods : Base[];
-	mods.fromArray(ref root);
+	mods.fromArray(ref modulesRoot);
 
 	return mods;
 }
