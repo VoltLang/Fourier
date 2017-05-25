@@ -60,6 +60,7 @@ fn printBase(base: Base, ref indent: i32)
 	case Constructor: printConstructor(base, ref indent); break;
 	case Alias: printAlias(base, ref indent); break;
 	case Exp: printExp(base, ref indent); break;
+	case Import: break;
 	}
 }
 

@@ -31,6 +31,7 @@ enum Kind
 	Constructor,
 	Alias,
 	Exp,
+	Import,
 }
 
 enum Linkage
@@ -402,7 +403,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		info.kind = defKind;
 		info.getFields(ref e);
 		final switch (info.kind) with (Kind) {
-		case Invalid, Exp: throw new Exception("kind not specified");
+		case Invalid, Exp, Import: throw new Exception("kind not specified");
 		case Alias: arr ~= info.toAlias(); break;
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
@@ -436,6 +437,7 @@ fn getKindFromString(str : string) Kind
 	case "module": return Module;
 	case "member": return Member;
 	case "alias": return Alias;
+	case "import": return Import;
 	default: throw new Exception("unknown kind '" ~ str ~ "'");
 	}
 }
@@ -459,6 +461,7 @@ fn getStringFromKind(kind: Kind) string
 	case Constructor: return "constructor";
 	case Alias: return "alias";
 	case Exp: return "exp";
+	case Import: return "import";
 	}
 }
 
