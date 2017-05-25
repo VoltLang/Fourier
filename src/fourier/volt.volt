@@ -403,7 +403,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		info.kind = defKind;
 		info.getFields(ref e);
 		final switch (info.kind) with (Kind) {
-		case Invalid, Exp, Import: throw new Exception("kind not specified");
+		case Invalid, Exp: throw new Exception("kind not specified");
 		case Alias: arr ~= info.toAlias(); break;
 		case Arg: arr ~= info.toArg(); break;
 		case Enum: arr ~= info.toNamed(); break;
@@ -418,6 +418,7 @@ fn fromArray(ref arr : Base[], ref v : json.Value, defKind : Kind = Kind.Invalid
 		case Function: arr ~= info.toFunction(); break;
 		case Destructor: arr ~= info.toFunction(); break;
 		case Constructor: arr ~= info.toFunction(); break;
+		case Import: break;
 		}
 	}
 }
