@@ -6,7 +6,7 @@ import watt.io;
 
 import fourier.volt;
 
-/**
+/*!
  * Given an array of fourier.volt.Bases, print them to stdout as a Volt module.
  */
 fn print(bases: Base[], moduleName: string)

@@ -57,7 +57,7 @@ class Walker
 		return names[id];
 	}
 
-	/**
+	/*!
 	 * Call before visiting the fields of an aggregate.
 	 */
 	fn pushAggregate(cursor: CXCursor, parent: Parent)
@@ -84,7 +84,7 @@ class Walker
 		parentStack = parentStack[0 .. $-1];
 	}
 
-	/**
+	/*!
 	 * Get a variable name for an anonymous struct/union entry.
 	 * Must be called after pushAggregate().
 	 */

@@ -1,7 +1,7 @@
 // See copyright just below.
 module fourier.license;
 
-/**
+/*!
  * This is the license for the Fourier application.
  */
 enum string license = `

@@ -10,7 +10,7 @@ import watt.text.string : indexOf, replace, endsWith;
 import watt.text.sink;
 import json = watt.text.json;
 
-/**
+/*!
  * Type of doc object.
  */
 enum Kind
@@ -53,7 +53,7 @@ fn stringToLinkage(s: string) Linkage
 	}
 }
 
-/**
+/*!
  * Base class for all doc objects.
  */
 class Base
@@ -62,7 +62,7 @@ class Base
 	doc : string;
 }
 
-/**
+/*!
  * Base class for all doc objects that can have names.
  */
 class Named : Base
@@ -86,7 +86,7 @@ fn buildEnumDecl(name: string, value: int) EnumDecl
 	return named;
 }
 
-/**
+/*!
  * Base class for things with children, like Module, Class, Structs.
  */
 class Parent : Named
@@ -111,7 +111,7 @@ fn buildStruct(name: string) Parent
 	return buildAggregate(Kind.Struct, name, []);
 }
 
-/**
+/*!
  * Argument to a function.
  */
 class Arg : Base
@@ -129,7 +129,7 @@ fn buildArg(name: string, type: string) Arg
 	return arg;
 }
 
-/**
+/*!
  * Return from a function.
  */
 class Return : Base
@@ -146,7 +146,7 @@ fn buildReturn(type: string) Return
 	return ret;
 }
 
-/**
+/*!
  * A variable or field on a aggregate.
  */
 class Variable : Named
@@ -167,7 +167,7 @@ fn buildVariable(name: string, type: string) Variable
 	return var;
 }
 
-/**
+/*!
  * An alias.
  */
 class Alias : Named
@@ -185,7 +185,7 @@ fn buildAlias(name: string, type: string) Alias
 	return _alias;
 }
 
-/**
+/*!
  * A function or constructor, destructor or method on a aggregate.
  */
 class Function : Named
@@ -206,7 +206,7 @@ fn buildFunction(name: string, args: Base[], rets: Base[]) Function
 	return func;
 }
 
-/**
+/*!
  * An expression.
  */
 class Exp : Base
@@ -223,7 +223,7 @@ fn buildExp(value: string) Exp
 	return exp;
 }
 
-/**
+/*!
  * Given a string 'const(const(T))', turn it into 'const(T)'.
  * The outer const is stripped, so const(const(T)*) becomes const(T)*.
  */
@@ -256,7 +256,7 @@ fn compressConst(s: string) string
 	return s;
 }
 
-/**
+/*!
  * Used to collect information during parsing.
  */
 struct Info

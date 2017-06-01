@@ -12,7 +12,7 @@ import lib.clang;
 
 import fourier.walker;
 
-/**
+/*!
  * Get a Volt string from a CXString.
  * This function will dispose the CXString.
  */
@@ -23,7 +23,7 @@ fn getVoltString(text : CXString) string
 	return str;
 }
 
-/**
+/*!
  * Given a path to a C source file or header, return a string
  * usable as a module name.
  */

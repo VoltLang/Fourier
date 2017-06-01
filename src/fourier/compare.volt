@@ -1,6 +1,6 @@
 // Copyright © 2016, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
-/**
+/*!
  * Compare Volt JSON output to a C header file.
  */
 module fourier.compare;
@@ -20,7 +20,7 @@ import fourier.volt;
 import fourier.util : getVoltString;
 import fourier.walker;
 
-/**
+/*!
  * List the important differences between a C header file, and the JSON output
  * of a Volt module (presumably binding the same file).
  *
@@ -304,7 +304,7 @@ fn retsEqual(a: Return, b: Return, indent: string) bool
 	return typesEqual(a.type, b.type, indent);
 }
 
-/**
+/*!
  * Returns a Named from bases that has the name name, or null.
  */
 fn getName(bases: Base[], name: string) Named
@@ -321,7 +321,7 @@ fn getName(bases: Base[], name: string) Named
 	return null;
 }
 
-/**
+/*!
  * Temporary: List the structs names.
  */
 fn listStructs(filename: string, structs: Base[])
@@ -334,7 +334,7 @@ fn listStructs(filename: string, structs: Base[])
 	}
 }
 
-/**
+/*!
  * Load and parse a JSON file.
  *
  * Params:
@@ -347,7 +347,7 @@ fn loadJson(jsonPath: string) Base[]
 	return parse(str);
 }
 
-/**
+/*!
  * Holds pieces of information together, for libclang.
  */
 struct ClangContext
@@ -356,7 +356,7 @@ struct ClangContext
 	tu: CXTranslationUnit;
 }
 
-/**
+/*!
  * libclang doesn't know anything about the default search paths.
  * Ask clang about them, and append them to args.
  */
@@ -389,7 +389,7 @@ fn addDefaultPaths(ref args: const(char)*[])
 	ifs.close();
 }
 
-/**
+/*!
  * Initialise libclang, and parse a C file.
  *
  * Params:
@@ -432,7 +432,7 @@ fn printDiag(tu: CXTranslationUnit, file: string)
 	}
 }
 
-/**
+/*!
  * Clean up a ClangContext from loadC.
  */
 fn unloadC(context: ClangContext)
@@ -441,7 +441,7 @@ fn unloadC(context: ClangContext)
 	clang_disposeIndex(context.index);
 }
 
-/**
+/*!
  * Return the Bases that match a given filter.
  *
  * Params:
