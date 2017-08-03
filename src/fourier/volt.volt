@@ -8,7 +8,7 @@ import watt.io.file;
 import watt.io : writefln;
 import watt.text.string : indexOf, replace, endsWith;
 import watt.text.sink;
-import json = watt.text.json;
+import json = watt.json;
 
 /*!
  * Type of doc object.
