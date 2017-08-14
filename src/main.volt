@@ -51,7 +51,6 @@ fn main(args: string[]) i32
 		test(arg, printDebug, moduleName);
 		return 0;
 	}
-	return 1;
 }
 
 fn usage()
