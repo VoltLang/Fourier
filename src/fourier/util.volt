@@ -123,7 +123,6 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 	case CXType_LongDouble: return applyConst("f64");
 	default: return applyConst(type.kind.toString());
 	}
-	assert(false);  // Never reached.
 }
 
 fn isVaList(decl: string) bool
