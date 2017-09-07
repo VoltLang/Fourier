@@ -108,7 +108,7 @@ fn buildAggregate(kind: Kind, name: string, children: Base[]) Parent
 
 fn buildStruct(name: string) Parent
 {
-	return buildAggregate(Kind.Struct, name, []);
+	return buildAggregate(Kind.Struct, name, null);
 }
 
 /*!

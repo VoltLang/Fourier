@@ -148,7 +148,7 @@ fn doExplicitAggregateDecl(ref cursor: CXCursor, w: Walker, decl: string)
 		assert(false);
 	}
 	name := words[1];
-	p : Parent = buildAggregate(kind, name, []);
+	p : Parent = buildAggregate(kind, name, null);
 	p.isAnonymous = name.indexOf("__Anon") >= 0;
 	w.pushAggregate(cursor, p);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
@@ -168,7 +168,7 @@ fn doAggregateDecl(ref cursor: CXCursor, w: Walker, kind: Kind)
 		structName = w.getAnonymousName(idName);
 		isAnonymous = true;
 	}
-	p : Parent = buildAggregate(kind, structName, []);
+	p : Parent = buildAggregate(kind, structName, null);
 	p.isAnonymous = isAnonymous;
 	w.pushAggregate(cursor, p);
 	clang_Type_visitFields(structType, visitFieldAndPrint, cast(void*)w);
