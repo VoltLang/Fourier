@@ -10,7 +10,7 @@
 |* This header provides the CXErrorCode enumerators.                          *|
 |*                                                                            *|
 \*===----------------------------------------------------------------------===*/
-module lib.clang.CXErrorCode;
+module lib.clang.c.CXErrorCode;
 
 
 /**
