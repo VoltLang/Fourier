@@ -134,7 +134,7 @@ fn walk(tu: CXTranslationUnit, printDebug: bool, moduleName: string) Walker
 	cursor := clang_getTranslationUnitCursor(tu);
 
 	if (printDebug) {
-		visit(cursor, CXCursor.init, ptr);
+		visit(cursor, CXCursor.default, ptr);
 	}
 
 	// Print all top level function decls.
