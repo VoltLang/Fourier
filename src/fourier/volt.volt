@@ -293,6 +293,8 @@ public:
 			case "linkage": this.linkage = stringToLinkage(v.str()); break;
 			case "hasBody": this.hasBody = v.boolean(); break;
 			case "value": this.value = v.str(); break;
+			case "access", "isStandalone", "storage", "mangledName", "isExtern", "aliases":
+				break; // silenced
 			default: writefln("unknown key '" ~ k ~ "'");
 			}
 		}
