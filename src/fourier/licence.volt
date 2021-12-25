@@ -5,8 +5,9 @@ module fourier.license;
  * This is the license for the Fourier application.
  */
 enum string license = `
-Copyright © 2016, Bernard Helyer.  All rights reserved.
-Copyright © 2016, Jakob Bornecrantz. All rights reserved.
+Copyright 2021, Collabora, Ltd.
+Copyright 2016-2018, Bernard Helyer.
+Copyright 2016-2018, Jakob Bornecrantz.
 
 Boost Software License - Version 1.0 - August 17th, 2003
 
