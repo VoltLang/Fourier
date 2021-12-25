@@ -75,12 +75,22 @@ fn typeString(type: CXType, walker: Walker, id: string = "") string
 		return applyConst(tdName);
 	case CXType_Pointer:
 		base := clang_getPointeeType(type);
-		if (base.kind == CXType_Unexposed) {
-			canonicalType := clang_getCanonicalType(base);
-			if (canonicalType.kind == CXType_FunctionNoProto ||
-				canonicalType.kind == CXType_FunctionProto) {
+
+
+		version (all) { // Sometime between 3.8 and 13 this changed.
+			if (base.kind == CXType_FunctionProto ||
+			    base.kind == CXType_FunctionNoProto) {
 				// Don't print * for function pointers.
 				return applyConst(base.typeString(walker, id));
+			}
+		} else {
+			if (base.kind == CXType_Unexposed) {
+				canonicalType := clang_getCanonicalType(base);
+				if (canonicalType.kind == CXType_FunctionNoProto ||
+					canonicalType.kind == CXType_FunctionProto) {
+					// Don't print * for function pointers.
+					return applyConst(base.typeString(walker, id));
+				}
 			}
 		}
 		return applyConst(format("%s*", base.typeString(walker, id)));
