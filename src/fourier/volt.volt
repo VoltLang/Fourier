@@ -1,4 +1,6 @@
-// Copyright © 2016, Jakob Bornecrantz.  All rights reserved.
+// Copyright 2021, Collabora, Ltd.
+// Copyright 2016-2018, Bernard Helyer.
+// Copyright 2016-2018, Jakob Bornecrantz.
 // See copyright notice in src/fourier/license.volt (BOOST ver. 1.0).
 module fourier.volt;
 
