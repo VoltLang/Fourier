@@ -253,11 +253,17 @@ fn parentComparison(cParent: Parent, jParent: Parent, indent: string) bool
 
 fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) bool
 {
+	fn warn(reason: string)
+	{
+		writefln("%sFunction '%s' match failure. (%s) [WARNING]", indent, cFunction.name, reason);
+	}
+
 	fn fail(reason: string) bool
 	{
 		writefln("%sFunction '%s' match failure. (%s) [FAIL]", indent, cFunction.name, reason);
 		return false;
 	}
+
 	if (jsonFunction.hasBody) {
 		// This is probably a wrapper function, assume they've got it right.
 		return true;
@@ -275,33 +281,44 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 		if (cArg is null || jArg is null) {
 			return fail("not a valid argument");
 		}
-		if (!argsEqual(cArg, jArg, indent)) {
-			return fail(format("argument '%s' mismatch C:'%s' Volt:'%s'", cArg.name, cArg.type, jArg.type));
+		if (typedEqual(cArg, jArg, indent)) {
+			continue;
 		}
+
+		cStr := formatTyped(cArg);
+		jStr := formatTyped(jArg);
+
+		if (typedFullEquals(cArg, jArg, indent)) {
+			warn(format("argument '%s' mismatch C:%s Volt:%s", cArg.name, cStr, jStr));
+			continue;
+		}
+
+		return fail(format("argument '%s' mismatch C:%s Volt:%s", cArg.name, cStr, jStr));
 	}
+
 	foreach (i; 0 .. cFunction.rets.length) {
 		cRet := cast(Return)cFunction.rets[i];
 		jRet := cast(Return)jsonFunction.rets[i];
 		if (cRet is null || jRet is null) {
 			return fail("not a valid return");
 		}
-		if (!retsEqual(cRet, jRet, indent)) {
-			return fail(format("return mismatch C:'%s' Volt:'%s'", cRet.type, jRet.type));
+
+		if (typedEqual(cRet, jRet, indent)) {
+			continue;
 		}
+
+		cStr := formatTyped(cRet);
+		jStr := formatTyped(jRet);
+
+		if (typedFullEquals(cRet, jRet, indent)) {
+			warn(format("return mismatch C:%s Volt:%s", cStr, jStr));
+			continue;
+		}
+
+		return fail(format("return mismatch C:%s Volt:%s", cStr, jStr));
 	}
+
 	return true;
-}
-
-/// Tests two Args for equality.
-fn argsEqual(a: Arg, b: Arg, indent: string) bool
-{
-	return typesEqual(a.type, b.type, indent);
-}
-
-/// Tests two Returns for equality.
-fn retsEqual(a: Return, b: Return, indent: string) bool
-{
-	return typesEqual(a.type, b.type, indent);
 }
 
 /*!
@@ -475,3 +492,41 @@ private struct Filter
 	}
 }
 private global Filter filter;
+
+
+/*!
+ * Tests two typed for equality.
+ */
+private fn typedEqual(a: Typed, b: Typed, indent: string) bool
+{
+	// Simple check.
+	return typesEqual(a.type, b.type, indent);
+}
+
+/*!
+ * Tests two typed for equality, also taking in account full.
+ */
+private fn typedFullEquals(a: Typed, b: Typed, indent: string) bool
+{
+	if (a.typeFull is null && b.typeFull is null) {
+		return false;
+	}
+
+	aStr := a.typeFull !is null ? a.typeFull : a.type;
+	bStr := b.typeFull !is null ? b.typeFull : b.type;
+
+	return typesEqual(aStr, bStr, indent);
+}
+
+/*!
+ * Format two typed taking into account typeFull.
+ */
+private fn formatTyped(t: Typed) string
+{
+	if (t.typeFull is null ||
+	    t.type == t.typeFull) {
+		return new "'${t.type}'";
+	}
+
+	return new "'${t.type} (aka '${t.typeFull}')";
+}

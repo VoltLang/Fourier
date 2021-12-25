@@ -112,13 +112,20 @@ fn buildStruct(name: string) Parent
 }
 
 /*!
- * Argument to a function.
+ * Common base class for typed things.
  */
-class Arg : Base
+class Typed : Base
 {
-	name : string;
 	type : string;
 	typeFull : string;
+}
+
+/*!
+ * Argument to a function.
+ */
+class Arg : Typed
+{
+	name : string;
 }
 
 fn buildArg(name: string, type: string) Arg
@@ -132,10 +139,9 @@ fn buildArg(name: string, type: string) Arg
 /*!
  * Return from a function.
  */
-class Return : Base
+class Return : Typed
 {
-	type : string;
-	typeFull : string;
+	// Empty
 }
 
 fn buildReturn(type: string) Return
