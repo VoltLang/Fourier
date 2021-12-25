@@ -1,6 +1,6 @@
 name = "fourier"
 dependencies = ["watt", "watt.json"]
 [platform.'linux || osx']
-libraries = ["clang-3.8"]
+libraries = ["clang-13"]
 [platform.msvc]
 libraries = ["libclang.lib"]
