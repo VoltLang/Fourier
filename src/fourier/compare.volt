@@ -295,6 +295,11 @@ fn funcComparison(cFunction: Function, jsonFunction: Function, indent: string) b
 			continue;
 		}
 
+		// Linux stdlib defines it to this for some reason.
+		if (cFunction.name == "tmpnam" && i == 0 && cArg.type == "char[20]" && jArg.type == "char*") {
+			continue;
+		}
+
 		return fail(format("argument '%s' mismatch C:%s Volt:%s", cArg.name, cStr, jStr));
 	}
 
